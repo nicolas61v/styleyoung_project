@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.db.models import Q, Count
 from django.views.generic import ListView
 from django.http import JsonResponse
-from .models import Producto, Categoria, CarritoCompras, Pedido
+from .models import Producto, Categoria, CarritoCompras, Pedido, Talla
 
 
 def es_admin(user):

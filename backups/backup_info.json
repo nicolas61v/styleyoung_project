@@ -1,0 +1,27 @@
+{
+  "proyecto": "StyleYoung",
+  "fecha_respaldo": "2025-08-28T00:47:46.022496",
+  "base_datos": "db.sqlite3",
+  "tablas": {
+    "django_migrations": 22,
+    "django_content_type": 13,
+    "auth_group_permissions": 0,
+    "auth_permission": 52,
+    "auth_group": 0,
+    "usuarios_usuario": 4,
+    "usuarios_usuario_groups": 0,
+    "usuarios_usuario_user_permissions": 0,
+    "django_admin_log": 0,
+    "django_session": 0,
+    "tienda_categoria": 5,
+    "tienda_carritocompras": 0,
+    "tienda_pedido": 6,
+    "tienda_talla": 48,
+    "tienda_itempedido": 9,
+    "tienda_itemcarrito": 0,
+    "tienda_producto": 20
+  },
+  "total_registros": 179,
+  "version": "1.0.0",
+  "notas": "Respaldo automático generado por backup_database.py"
+}
