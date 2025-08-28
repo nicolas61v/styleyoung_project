@@ -133,14 +133,48 @@ def busqueda_ajax(request):
 @user_passes_test(es_admin)
 def admin_dashboard(request):
     """Dashboard principal para administradores"""
+    from django.db.models import Sum
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    # Estadísticas básicas
     total_productos = Producto.objects.count()
     total_pedidos = Pedido.objects.count()
     total_categorias = Categoria.objects.count()
     
+    # Productos con stock bajo (menos de 5 unidades)
+    productos_stock_bajo = Producto.objects.filter(
+        talla__stock__lt=5
+    ).distinct().count()
+    
+    # Top 3 productos más vendidos (dinámico)
+    top_productos = Producto.get_top_vendidos(limit=3)
+    
+    # Pedidos recientes (últimos 5)
+    pedidos_recientes = Pedido.objects.order_by('-fecha_pedido')[:5]
+    
+    # Ventas del mes actual
+    primer_dia_mes = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    ventas_mes = Pedido.objects.filter(
+        fecha_pedido__gte=primer_dia_mes,
+        estado='entregado'
+    ).aggregate(Sum('total'))['total__sum'] or 0
+    
+    # Pedidos completados del mes
+    pedidos_completados_mes = Pedido.objects.filter(
+        fecha_pedido__gte=primer_dia_mes,
+        estado='entregado'
+    ).count()
+    
     return render(request, 'admin/dashboard.html', {
         'total_productos': total_productos,
         'total_pedidos': total_pedidos,
-        'total_categorias': total_categorias
+        'total_categorias': total_categorias,
+        'productos_stock_bajo': productos_stock_bajo,
+        'top_productos': top_productos,
+        'pedidos_recientes': pedidos_recientes,
+        'ventas_mes': ventas_mes,
+        'pedidos_completados_mes': pedidos_completados_mes,
     })
 
 
@@ -177,9 +211,39 @@ def admin_pedidos(request):
 @user_passes_test(es_admin)
 def admin_reportes(request):
     """Reportes y estadísticas para administradores"""
-    # Por ahora básico, expandiremos después
+    from django.db.models import Sum, Count
+    
+    # Actualizar contadores si se solicita
+    if request.GET.get('actualizar') == 'ventas':
+        productos_actualizados = Producto.actualizar_todas_las_ventas()
+        messages.success(request, f'Se actualizaron los contadores de {productos_actualizados} productos.')
+    
+    # Top productos más vendidos (completo)
+    top_productos = Producto.objects.filter(total_vendidos__gt=0).order_by('-total_vendidos')[:10]
+    
+    # Estadísticas por categoría
+    ventas_por_categoria = Categoria.objects.annotate(
+        total_vendidos=Sum('producto__total_vendidos')
+    ).order_by('-total_vendidos')
+    
     productos = Producto.objects.all()
     
     return render(request, 'admin/reportes.html', {
-        'productos': productos
+        'productos': productos,
+        'top_productos': top_productos,
+        'ventas_por_categoria': ventas_por_categoria
     })
+
+
+@user_passes_test(es_admin)
+def actualizar_ventas(request):
+    """Vista para actualizar contadores de ventas manualmente"""
+    if request.method == 'POST':
+        productos_actualizados = Producto.actualizar_todas_las_ventas()
+        return JsonResponse({
+            'success': True,
+            'productos_actualizados': productos_actualizados,
+            'message': f'Se actualizaron {productos_actualizados} productos.'
+        })
+    
+    return JsonResponse({'success': False, 'message': 'Método no permitido'})

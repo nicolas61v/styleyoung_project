@@ -311,5 +311,36 @@ function actualizarDatos() {
         location.reload();
     }, 1000);
 }
+
+function actualizarContadoresVentas() {
+    const button = event.target.closest('button');
+    button.disabled = true;
+    button.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Calculando...';
+    
+    fetch('/api/actualizar-ventas/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(`✅ ${data.message}`);
+            location.reload();
+        } else {
+            alert('❌ Error al actualizar contadores');
+            button.disabled = false;
+            button.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Actualizar';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('❌ Error de conexión');
+        button.disabled = false;
+        button.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Actualizar';
+    });
+}
 </script>
 {% endblock %}

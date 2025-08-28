@@ -13,6 +13,7 @@ urlpatterns = [
     
     # APIs AJAX
     path('api/busqueda/', views.busqueda_ajax, name='busqueda_ajax'),
+    path('api/actualizar-ventas/', views.actualizar_ventas, name='actualizar_ventas'),
     
     # URLs para administradores (/admin-panel/)
     path('admin-panel/', views.admin_dashboard, name='admin_dashboard'),

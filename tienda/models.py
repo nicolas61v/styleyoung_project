@@ -33,6 +33,7 @@ class Producto(models.Model):
     material = models.CharField(max_length=50)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
+    total_vendidos = models.IntegerField(default=0)
     
     def obtener_detalles(self):
         """Obtener detalles completos del producto"""
@@ -50,6 +51,32 @@ class Producto(models.Model):
     def stock_total(self):
         """Calcular stock total sumando todas las tallas"""
         return sum(talla.stock for talla in self.talla_set.all())
+    
+    def actualizar_ventas(self):
+        """Actualizar el contador de productos vendidos basado en pedidos entregados"""
+        from django.db.models import Sum
+        total = ItemPedido.objects.filter(
+            producto=self,
+            pedido__estado='entregado'
+        ).aggregate(Sum('cantidad'))['cantidad__sum'] or 0
+        
+        self.total_vendidos = total
+        self.save()
+        return total
+    
+    @classmethod
+    def get_top_vendidos(cls, limit=3):
+        """Obtener los productos más vendidos"""
+        return cls.objects.filter(total_vendidos__gt=0).order_by('-total_vendidos')[:limit]
+    
+    @classmethod
+    def actualizar_todas_las_ventas(cls):
+        """Actualizar contadores de ventas para todos los productos"""
+        productos_actualizados = 0
+        for producto in cls.objects.all():
+            producto.actualizar_ventas()
+            productos_actualizados += 1
+        return productos_actualizados
     
     def __str__(self):
         return f"{self.nombre} - {self.marca}"
