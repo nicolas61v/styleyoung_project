@@ -1,0 +1,281 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block page_title %}Gestión de Pedidos{% endblock %}
+
+{% block page_actions %}
+<div class="btn-group" role="group">
+    <button class="btn btn-outline-success btn-sm" onclick="exportPedidos()">
+        <i class="bi bi-download"></i> Exportar
+    </button>
+    <button class="btn btn-outline-info btn-sm" onclick="refreshPedidos()">
+        <i class="bi bi-arrow-clockwise"></i> Actualizar
+    </button>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <!-- Filtros rápidos -->
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <select class="form-select form-select-sm">
+                            <option value="">Todos los estados</option>
+                            <option value="pendiente">Pendiente</option>
+                            <option value="procesando">Procesando</option>
+                            <option value="enviado">Enviado</option>
+                            <option value="entregado">Entregado</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="date" class="form-control form-control-sm" placeholder="Fecha desde">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="date" class="form-control form-control-sm" placeholder="Fecha hasta">
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-primary btn-sm">
+                            <i class="bi bi-search"></i> Filtrar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="bi bi-bag-check"></i> Lista de Pedidos</h5>
+                <span class="badge bg-secondary">{{ pedidos|length }} pedido{{ pedidos|length|pluralize }}</span>
+            </div>
+            <div class="card-body">
+                {% if pedidos %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Pedido #</th>
+                                <th>Cliente</th>
+                                <th>Fecha</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Items</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pedido in pedidos %}
+                            <tr>
+                                <td><strong>#{{ pedido.id|stringformat:"03d" }}</strong></td>
+                                <td>
+                                    <div>
+                                        <strong>{{ pedido.usuario.nombre }}</strong><br>
+                                        <small class="text-muted">{{ pedido.usuario.email }}</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <small>{{ pedido.fecha_pedido|date:"d/m/Y" }}<br>{{ pedido.fecha_pedido|time:"H:i" }}</small>
+                                </td>
+                                <td><strong class="text-success">${{ pedido.total }}</strong></td>
+                                <td>
+                                    <span class="badge 
+                                        {% if pedido.estado == 'pendiente' %}bg-warning
+                                        {% elif pedido.estado == 'procesando' %}bg-info
+                                        {% elif pedido.estado == 'enviado' %}bg-primary
+                                        {% elif pedido.estado == 'entregado' %}bg-success
+                                        {% else %}bg-danger
+                                        {% endif %}">
+                                        {{ pedido.get_estado_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">
+                                        {{ pedido.itempedido_set.count }} item{{ pedido.itempedido_set.count|pluralize }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-outline-info btn-sm" 
+                                                title="Ver detalles"
+                                                onclick="verDetallePedido({{ pedido.id }})">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-primary btn-sm" 
+                                                title="Cambiar estado"
+                                                onclick="cambiarEstado({{ pedido.id }}, '{{ pedido.estado }}')">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </button>
+                                        <button class="btn btn-outline-success btn-sm" 
+                                                title="Imprimir"
+                                                onclick="imprimirPedido({{ pedido.id }})">
+                                            <i class="bi bi-printer"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-bag-x display-1 text-muted"></i>
+                    <h4 class="mt-3">No hay pedidos</h4>
+                    <p class="text-muted">Los pedidos aparecerán aquí cuando los clientes realicen compras.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Detalle del Pedido -->
+<div class="modal fade" id="detallePedidoModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-receipt"></i> Detalle del Pedido #<span id="pedido_numero"></span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="detalle_contenido">
+                    <!-- Se llenará dinámicamente -->
+                    <div class="text-center py-3">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary">
+                    <i class="bi bi-printer"></i> Imprimir
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Cambiar Estado -->
+<div class="modal fade" id="cambiarEstadoModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-arrow-repeat"></i> Cambiar Estado del Pedido
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="cambiarEstadoForm">
+                    <input type="hidden" id="pedido_id_estado" name="pedido_id">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Estado actual:</label>
+                        <span id="estado_actual" class="badge bg-info"></span>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Nuevo estado:</label>
+                        <select class="form-select" name="nuevo_estado" required>
+                            <option value="pendiente">Pendiente</option>
+                            <option value="procesando">Procesando</option>
+                            <option value="enviado">Enviado</option>
+                            <option value="entregado">Entregado</option>
+                            <option value="cancelado">Cancelado</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Comentario (opcional):</label>
+                        <textarea class="form-control" name="comentario" rows="2" 
+                                  placeholder="Agregar nota sobre el cambio de estado..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="confirmarCambioEstado()">
+                    <i class="bi bi-check"></i> Confirmar Cambio
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function verDetallePedido(pedidoId) {
+    document.getElementById('pedido_numero').textContent = String(pedidoId).padStart(3, '0');
+    
+    // Simular carga de detalles
+    setTimeout(() => {
+        document.getElementById('detalle_contenido').innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Información del Cliente:</h6>
+                    <p>Cliente de prueba<br>cliente@email.com<br>Calle 123, Ciudad</p>
+                </div>
+                <div class="col-md-6">
+                    <h6>Detalles del Envío:</h6>
+                    <p>Dirección de envío<br>Método: Entrega estándar</p>
+                </div>
+            </div>
+            <hr>
+            <h6>Items del Pedido:</h6>
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th>Producto</th><th>Cantidad</th><th>Precio</th><th>Subtotal</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Producto de ejemplo</td>
+                            <td>2</td>
+                            <td>$50.00</td>
+                            <td>$100.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }, 1000);
+    
+    var modal = new bootstrap.Modal(document.getElementById('detallePedidoModal'));
+    modal.show();
+}
+
+function cambiarEstado(pedidoId, estadoActual) {
+    document.getElementById('pedido_id_estado').value = pedidoId;
+    document.getElementById('estado_actual').textContent = estadoActual;
+    
+    var modal = new bootstrap.Modal(document.getElementById('cambiarEstadoModal'));
+    modal.show();
+}
+
+function confirmarCambioEstado() {
+    alert('Función cambiar estado - Por implementar');
+}
+
+function imprimirPedido(pedidoId) {
+    alert('Función imprimir pedido ' + pedidoId + ' - Por implementar');
+}
+
+function exportPedidos() {
+    alert('Función exportar pedidos - Por implementar');
+}
+
+function refreshPedidos() {
+    location.reload();
+}
+</script>
+{% endblock %}

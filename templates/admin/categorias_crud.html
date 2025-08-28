@@ -1,0 +1,233 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block page_title %}Gestión de Categorías{% endblock %}
+
+{% block page_actions %}
+<button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addCategoriaModal">
+    <i class="bi bi-plus"></i> Nueva Categoría
+</button>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-tags"></i> Lista de Categorías</h5>
+            </div>
+            <div class="card-body">
+                {% if categorias %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Descripción</th>
+                                <th>Productos</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for categoria in categorias %}
+                            <tr>
+                                <td><strong>#{{ categoria.id }}</strong></td>
+                                <td>
+                                    <span class="badge bg-primary fs-6">{{ categoria.nombre }}</span>
+                                </td>
+                                <td>
+                                    <small class="text-muted">
+                                        {{ categoria.descripcion|truncatewords:8 }}
+                                    </small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">
+                                        {{ categoria.producto_set.count }} producto{{ categoria.producto_set.count|pluralize }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="{% url 'tienda:productos' %}?categoria={{ categoria.id }}" 
+                                           class="btn btn-outline-info btn-sm" title="Ver productos">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <button class="btn btn-outline-warning btn-sm" 
+                                                title="Editar"
+                                                onclick="editCategoria({{ categoria.id }}, '{{ categoria.nombre }}', '{{ categoria.descripcion }}')">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-sm" 
+                                                title="Eliminar"
+                                                onclick="confirmDeleteCategoria({{ categoria.id }}, '{{ categoria.nombre }}')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-tags display-1 text-muted"></i>
+                    <h4 class="mt-3">No hay categorías</h4>
+                    <p class="text-muted">Comienza creando categorías para organizar tus productos.</p>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoriaModal">
+                        <i class="bi bi-plus"></i> Crear Primera Categoría
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-info-circle"></i> Información</h5>
+            </div>
+            <div class="card-body">
+                <h6>Gestión de Categorías</h6>
+                <p class="text-muted">Las categorías te permiten organizar y clasificar tus productos.</p>
+                
+                <hr>
+                
+                <h6>Estadísticas:</h6>
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-tags text-primary me-1"></i> {{ categorias|length }} categoría{{ categorias|length|pluralize }}</li>
+                    <li><i class="bi bi-box-seam text-success me-1"></i> {{ total_productos|default:0 }} producto{{ total_productos|default:0|pluralize }}</li>
+                </ul>
+                
+                <hr>
+                
+                <h6>Consejos:</h6>
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-lightbulb text-warning me-1"></i> Usa nombres descriptivos</li>
+                    <li><i class="bi bi-lightbulb text-warning me-1"></i> Mantén las descripciones claras</li>
+                    <li><i class="bi bi-lightbulb text-warning me-1"></i> Evita duplicar categorías</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Categorías más populares -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5><i class="bi bi-star"></i> Más Populares</h5>
+            </div>
+            <div class="card-body">
+                {% if categorias %}
+                {% for categoria in categorias %}
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span>{{ categoria.nombre }}</span>
+                    <span class="badge bg-secondary">{{ categoria.producto_set.count }}</span>
+                </div>
+                {% if forloop.counter >= 5 %}{% break %}{% endif %}
+                {% endfor %}
+                {% else %}
+                <p class="text-muted">No hay datos disponibles.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Agregar Categoría -->
+<div class="modal fade" id="addCategoriaModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-plus-circle"></i> Nueva Categoría
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addCategoriaForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Nombre de la Categoría</label>
+                        <input type="text" class="form-control" name="nombre" required 
+                               placeholder="Ej: Blusas, Pantalones, Vestidos...">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Descripción</label>
+                        <textarea class="form-control" name="descripcion" rows="3" required
+                                  placeholder="Describe qué tipo de productos incluye esta categoría..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="saveCategoria()">
+                    <i class="bi bi-save"></i> Guardar Categoría
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar Categoría -->
+<div class="modal fade" id="editCategoriaModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-pencil-square"></i> Editar Categoría
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editCategoriaForm">
+                    {% csrf_token %}
+                    <input type="hidden" id="edit_categoria_id" name="categoria_id">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Nombre de la Categoría</label>
+                        <input type="text" class="form-control" id="edit_nombre" name="nombre" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Descripción</label>
+                        <textarea class="form-control" id="edit_descripcion" name="descripcion" rows="3" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-warning" onclick="updateCategoria()">
+                    <i class="bi bi-save"></i> Actualizar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function editCategoria(id, nombre, descripcion) {
+    document.getElementById('edit_categoria_id').value = id;
+    document.getElementById('edit_nombre').value = nombre;
+    document.getElementById('edit_descripcion').value = descripcion;
+    
+    var modal = new bootstrap.Modal(document.getElementById('editCategoriaModal'));
+    modal.show();
+}
+
+function confirmDeleteCategoria(id, nombre) {
+    if (confirm('¿Estás seguro de que quieres eliminar la categoría "' + nombre + '"?\n\nEsto podría afectar los productos asociados.')) {
+        alert('Función eliminar categoría ' + id + ' - Por implementar');
+    }
+}
+
+function saveCategoria() {
+    alert('Función guardar categoría - Por implementar');
+}
+
+function updateCategoria() {
+    alert('Función actualizar categoría - Por implementar');
+}
+</script>
+{% endblock %}

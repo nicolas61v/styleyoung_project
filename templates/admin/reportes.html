@@ -1,0 +1,315 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block page_title %}Reportes y Análisis{% endblock %}
+
+{% block page_actions %}
+<div class="btn-group" role="group">
+    <button class="btn btn-outline-success btn-sm" onclick="exportarReporte()">
+        <i class="bi bi-download"></i> Exportar PDF
+    </button>
+    <button class="btn btn-outline-info btn-sm" onclick="actualizarDatos()">
+        <i class="bi bi-arrow-clockwise"></i> Actualizar
+    </button>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Métricas Principales -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>$12,450</h4>
+                        <p class="mb-0">Ventas del Mes</p>
+                    </div>
+                    <div>
+                        <i class="bi bi-cash-coin fa-2x"></i>
+                    </div>
+                </div>
+                <small>+15% vs mes anterior</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>86</h4>
+                        <p class="mb-0">Pedidos Completados</p>
+                    </div>
+                    <div>
+                        <i class="bi bi-bag-check fa-2x"></i>
+                    </div>
+                </div>
+                <small>+8% vs mes anterior</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>234</h4>
+                        <p class="mb-0">Productos Vendidos</p>
+                    </div>
+                    <div>
+                        <i class="bi bi-box-seam fa-2x"></i>
+                    </div>
+                </div>
+                <small>+22% vs mes anterior</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>42</h4>
+                        <p class="mb-0">Nuevos Clientes</p>
+                    </div>
+                    <div>
+                        <i class="bi bi-people fa-2x"></i>
+                    </div>
+                </div>
+                <small>+5% vs mes anterior</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Top 3 Productos Más Vendidos -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-trophy"></i> Top 3 Productos Más Vendidos</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-2">
+                        <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                            <i class="bi bi-trophy"></i>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <h6 class="mb-1">Blusa Casual Azul</h6>
+                        <small class="text-muted">Categoría: Blusas</small>
+                    </div>
+                    <div class="col-2 text-end">
+                        <strong>45</strong><br>
+                        <small class="text-muted">vendidos</small>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-2">
+                        <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                            <i class="bi bi-award"></i>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <h6 class="mb-1">Jean Skinny Negro</h6>
+                        <small class="text-muted">Categoría: Pantalones</small>
+                    </div>
+                    <div class="col-2 text-end">
+                        <strong>38</strong><br>
+                        <small class="text-muted">vendidos</small>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-2">
+                        <div class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                            <i class="bi bi-star"></i>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <h6 class="mb-1">Vestido Floral</h6>
+                        <small class="text-muted">Categoría: Vestidos</small>
+                    </div>
+                    <div class="col-2 text-end">
+                        <strong>32</strong><br>
+                        <small class="text-muted">vendidos</small>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <a href="{% url 'tienda:admin_productos' %}" class="btn btn-outline-primary btn-sm">
+                        Ver Todos los Productos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Ventas por Categoría -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-pie-chart"></i> Ventas por Categoría</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Blusas</span>
+                        <span>45%</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar bg-primary" style="width: 45%"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Pantalones</span>
+                        <span>30%</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" style="width: 30%"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Vestidos</span>
+                        <span>20%</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar bg-info" style="width: 20%"></div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Accesorios</span>
+                        <span>5%</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar bg-warning" style="width: 5%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Análisis de Stock -->
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-boxes"></i> Análisis de Inventario</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Producto</th>
+                                <th>Categoría</th>
+                                <th>Stock Total</th>
+                                <th>Vendidos</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <strong>Blusa Casual Azul</strong><br>
+                                    <small class="text-muted">SKU: BCA001</small>
+                                </td>
+                                <td><span class="badge bg-primary">Blusas</span></td>
+                                <td>15</td>
+                                <td>45</td>
+                                <td><span class="badge bg-success">Bueno</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Jean Skinny Negro</strong><br>
+                                    <small class="text-muted">SKU: JSN002</small>
+                                </td>
+                                <td><span class="badge bg-info">Pantalones</span></td>
+                                <td>3</td>
+                                <td>38</td>
+                                <td><span class="badge bg-warning">Stock Bajo</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <strong>Vestido Floral</strong><br>
+                                    <small class="text-muted">SKU: VF003</small>
+                                </td>
+                                <td><span class="badge bg-success">Vestidos</span></td>
+                                <td>0</td>
+                                <td>32</td>
+                                <td><span class="badge bg-danger">Agotado</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Estadísticas Rápidas -->
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-speedometer2"></i> Estadísticas Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span>Productos activos:</span>
+                    <strong class="text-success">{{ productos.count }}</strong>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span>Productos sin stock:</span>
+                    <strong class="text-danger">3</strong>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span>Valor total inventario:</span>
+                    <strong class="text-primary">$25,670</strong>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span>Ticket promedio:</span>
+                    <strong class="text-info">$145</strong>
+                </div>
+                
+                <hr>
+                
+                <h6>Acciones Recomendadas:</h6>
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-exclamation-triangle text-warning me-1"></i> <small>Reponer stock bajo</small></li>
+                    <li><i class="bi bi-plus-circle text-success me-1"></i> <small>Promocionar top productos</small></li>
+                    <li><i class="bi bi-graph-up text-info me-1"></i> <small>Analizar tendencias</small></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function exportarReporte() {
+    alert('Función exportar reporte - Por implementar');
+}
+
+function actualizarDatos() {
+    alert('Actualizando datos...');
+    setTimeout(() => {
+        location.reload();
+    }, 1000);
+}
+</script>
+{% endblock %}
