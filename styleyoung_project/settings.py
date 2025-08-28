@@ -140,3 +140,6 @@ LOGOUT_REDIRECT_URL = '/'
 # URLs de redirección para admin
 ADMIN_LOGIN_URL = 'admin_auth:login'
 ADMIN_LOGIN_REDIRECT_URL = '/admin-panel/'
+
+# Modelo de usuario personalizado
+AUTH_USER_MODEL = 'usuarios.Usuario'
