@@ -63,21 +63,44 @@
                 <p class="text-muted">{{ producto.descripcion }}</p>
             </div>
             
-            <!-- Tallas disponibles -->
+            <!-- Selector de Tallas con Stock en Tiempo Real -->
             <div class="mb-4">
-                <h5>Tallas Disponibles</h5>
-                {% if tallas_disponibles %}
-                <div class="row">
-                    {% for talla in tallas_disponibles %}
-                    <div class="col-6 col-md-4 col-lg-3 mb-2">
-                        <div class="card text-center">
-                            <div class="card-body py-2">
-                                <h6 class="card-title mb-1">{{ talla.get_talla_display }}</h6>
-                                <small class="text-muted">{{ talla.stock }} disponibles</small>
-                            </div>
-                        </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">Selecciona tu Talla</h5>
+                    <div id="stock-info" class="text-muted small" style="display: none;">
+                        <i class="bi bi-box-seam"></i> <span id="stock-cantidad">0</span> disponibles
                     </div>
+                </div>
+                
+                {% if producto.talla_set.all %}
+                <div class="tallas-selector mb-3">
+                    {% for talla in producto.talla_set.all %}
+                    <button type="button" 
+                            class="btn-talla {% if talla.stock > 0 %}disponible{% else %}agotada{% endif %} {% if talla.stock > 0 and talla.stock <= 3 %}pocas-unidades{% endif %}" 
+                            data-talla-id="{{ talla.id }}" 
+                            data-talla-nombre="{{ talla.talla }}" 
+                            data-stock="{{ talla.stock }}"
+                            {% if talla.stock == 0 %}disabled{% endif %}>
+                        <span class="talla-texto">{{ talla.talla }}</span>
+                        <small class="stock-texto">
+                            {% if talla.stock > 5 %}
+                                Disponible
+                            {% elif talla.stock > 0 %}
+                                {{ talla.stock }} left
+                            {% else %}
+                                Agotado
+                            {% endif %}
+                        </small>
+                    </button>
                     {% endfor %}
+                </div>
+                
+                <div id="talla-seleccionada" style="display: none;">
+                    <div class="alert alert-info">
+                        <i class="bi bi-check-circle"></i> 
+                        Talla <strong id="talla-elegida">-</strong> seleccionada
+                        <span id="stock-detalle"></span>
+                    </div>
                 </div>
                 {% else %}
                 <div class="alert alert-warning">
@@ -87,32 +110,39 @@
                 {% endif %}
             </div>
             
-            <!-- Botones de acción -->
+            <!-- Formulario de Compra -->
             {% if user.is_authenticated %}
-                {% if tallas_disponibles %}
-                <form method="post" action="#" class="mb-3">
+                {% if producto.stock_total > 0 %}
+                <form method="post" action="#" class="mb-3" id="form-agregar-carrito">
                     {% csrf_token %}
-                    <div class="row">
+                    <input type="hidden" name="talla_id" id="talla-id-hidden" value="">
+                    
+                    <div class="row align-items-end">
                         <div class="col-md-6 mb-2">
-                            <select class="form-select" name="talla_id" required>
-                                <option value="">Selecciona una talla</option>
-                                {% for talla in tallas_disponibles %}
-                                <option value="{{ talla.id }}">{{ talla.get_talla_display }} ({{ talla.stock }} disponibles)</option>
-                                {% endfor %}
-                            </select>
+                            <label for="cantidad" class="form-label">Cantidad</label>
+                            <div class="input-group">
+                                <button type="button" class="btn btn-outline-secondary" id="btn-decrease">
+                                    <i class="bi bi-dash"></i>
+                                </button>
+                                <input type="number" class="form-control text-center" name="cantidad" id="cantidad" 
+                                       value="1" min="1" max="1" readonly>
+                                <button type="button" class="btn btn-outline-secondary" id="btn-increase">
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                            </div>
+                            <small id="cantidad-ayuda" class="form-text text-muted">Selecciona una talla primero</small>
                         </div>
                         <div class="col-md-6 mb-2">
-                            <input type="number" class="form-control" name="cantidad" value="1" min="1" required>
+                            <button type="submit" class="btn btn-primary btn-lg w-100" id="btn-agregar" disabled>
+                                <i class="bi bi-cart-plus"></i> Agregar al Carrito
+                            </button>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-lg w-100 mt-2">
-                        <i class="bi bi-cart-plus"></i> Agregar al Carrito
-                    </button>
                 </form>
                 {% else %}
                 <div class="alert alert-danger">
                     <i class="bi bi-x-circle"></i> 
-                    Producto agotado. No se puede agregar al carrito.
+                    Producto completamente agotado. No se puede agregar al carrito.
                 </div>
                 {% endif %}
             {% else %}
@@ -149,4 +179,237 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.tallas-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.btn-talla {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border: 2px solid #ddd;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 8px;
+}
+
+.btn-talla.disponible {
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.btn-talla.disponible:hover {
+    background-color: #28a745;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.btn-talla.pocas-unidades {
+    border-color: #ffc107;
+    color: #ffc107;
+    position: relative;
+}
+
+.btn-talla.pocas-unidades::after {
+    content: '⚠️';
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    font-size: 12px;
+}
+
+.btn-talla.agotada {
+    border-color: #dc3545;
+    color: #dc3545;
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.btn-talla.seleccionada {
+    background-color: #007bff !important;
+    color: white !important;
+    border-color: #007bff !important;
+}
+
+.talla-texto {
+    font-weight: bold;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.stock-texto {
+    font-size: 10px;
+    line-height: 1;
+    margin-top: 2px;
+}
+
+.quantity-controls {
+    user-select: none;
+}
+
+@media (max-width: 768px) {
+    .btn-talla {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .tallas-selector {
+        gap: 8px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let tallaSeleccionada = null;
+let stockActual = 0;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Manejar selección de tallas
+    const botonesTallas = document.querySelectorAll('.btn-talla:not([disabled])');
+    const tallaHidden = document.getElementById('talla-id-hidden');
+    const cantidadInput = document.getElementById('cantidad');
+    const btnAgregar = document.getElementById('btn-agregar');
+    const btnDecrease = document.getElementById('btn-decrease');
+    const btnIncrease = document.getElementById('btn-increase');
+    const stockInfo = document.getElementById('stock-info');
+    const stockCantidad = document.getElementById('stock-cantidad');
+    const tallaSeleccionadaDiv = document.getElementById('talla-seleccionada');
+    const tallaElegida = document.getElementById('talla-elegida');
+    const stockDetalle = document.getElementById('stock-detalle');
+    const cantidadAyuda = document.getElementById('cantidad-ayuda');
+
+    botonesTallas.forEach(boton => {
+        boton.addEventListener('click', function() {
+            // Remover selección anterior
+            botonesTallas.forEach(b => b.classList.remove('seleccionada'));
+            
+            // Seleccionar nueva talla
+            this.classList.add('seleccionada');
+            
+            // Obtener datos
+            tallaSeleccionada = this.dataset.tallaId;
+            stockActual = parseInt(this.dataset.stock);
+            const tallaNombre = this.dataset.tallaNombre;
+            
+            // Actualizar campos ocultos y mostrar info
+            tallaHidden.value = tallaSeleccionada;
+            stockCantidad.textContent = stockActual;
+            stockInfo.style.display = 'block';
+            
+            // Mostrar talla seleccionada
+            tallaElegida.textContent = tallaNombre;
+            if (stockActual <= 3) {
+                stockDetalle.innerHTML = ` - <span class="text-warning">¡Solo ${stockActual} disponibles!</span>`;
+            } else {
+                stockDetalle.innerHTML = ` - <span class="text-success">${stockActual} disponibles</span>`;
+            }
+            tallaSeleccionadaDiv.style.display = 'block';
+            
+            // Actualizar cantidad máxima
+            cantidadInput.max = stockActual;
+            cantidadInput.value = 1;
+            cantidadInput.disabled = false;
+            
+            // Habilitar botón agregar
+            btnAgregar.disabled = false;
+            
+            // Actualizar ayuda
+            cantidadAyuda.textContent = `Máximo ${stockActual} unidades disponibles`;
+            cantidadAyuda.className = stockActual <= 3 ? 'form-text text-warning' : 'form-text text-success';
+            
+            // Habilitar controles de cantidad
+            actualizarControlesCantidad();
+        });
+    });
+
+    // Controles de cantidad
+    btnDecrease.addEventListener('click', function() {
+        const cantidad = parseInt(cantidadInput.value);
+        if (cantidad > 1) {
+            cantidadInput.value = cantidad - 1;
+            actualizarControlesCantidad();
+        }
+    });
+
+    btnIncrease.addEventListener('click', function() {
+        const cantidad = parseInt(cantidadInput.value);
+        if (cantidad < stockActual) {
+            cantidadInput.value = cantidad + 1;
+            actualizarControlesCantidad();
+        }
+    });
+
+    cantidadInput.addEventListener('input', function() {
+        const cantidad = parseInt(this.value);
+        if (cantidad < 1) this.value = 1;
+        if (cantidad > stockActual) this.value = stockActual;
+        actualizarControlesCantidad();
+    });
+
+    function actualizarControlesCantidad() {
+        const cantidad = parseInt(cantidadInput.value);
+        
+        // Habilitar/deshabilitar botones
+        btnDecrease.disabled = cantidad <= 1;
+        btnIncrease.disabled = cantidad >= stockActual;
+        
+        // Actualizar texto del botón agregar
+        if (cantidad > 1) {
+            btnAgregar.innerHTML = `<i class="bi bi-cart-plus"></i> Agregar ${cantidad} al Carrito`;
+        } else {
+            btnAgregar.innerHTML = `<i class="bi bi-cart-plus"></i> Agregar al Carrito`;
+        }
+        
+        // Actualizar info de stock restante
+        const stockRestante = stockActual - cantidad;
+        if (stockRestante === 0) {
+            cantidadAyuda.innerHTML = `<span class="text-danger"><i class="bi bi-exclamation-triangle"></i> Tomarías todo el stock disponible</span>`;
+        } else if (stockRestante <= 2) {
+            cantidadAyuda.innerHTML = `<span class="text-warning">Quedarían ${stockRestante} unidades</span>`;
+        } else {
+            cantidadAyuda.textContent = `Quedarían ${stockRestante} unidades disponibles`;
+        }
+    }
+
+    // Validación del formulario
+    document.getElementById('form-agregar-carrito').addEventListener('submit', function(e) {
+        if (!tallaSeleccionada) {
+            e.preventDefault();
+            alert('Por favor selecciona una talla antes de agregar al carrito.');
+            return false;
+        }
+        
+        const cantidad = parseInt(cantidadInput.value);
+        if (cantidad < 1 || cantidad > stockActual) {
+            e.preventDefault();
+            alert(`La cantidad debe estar entre 1 y ${stockActual}.`);
+            return false;
+        }
+        
+        // Mostrar confirmación
+        const tallaNombre = document.querySelector('.btn-talla.seleccionada').dataset.tallaNombre;
+        if (confirm(`¿Agregar ${cantidad} unidad${cantidad > 1 ? 'es' : ''} de talla ${tallaNombre} al carrito?`)) {
+            // Aquí el formulario se enviaría normalmente
+            btnAgregar.disabled = true;
+            btnAgregar.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Agregando...';
+        } else {
+            e.preventDefault();
+        }
+    });
+});
+</script>
 {% endblock %}
