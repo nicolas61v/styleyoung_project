@@ -11,6 +11,9 @@ urlpatterns = [
     path('carrito/', views.carrito, name='carrito'),
     path('mis-pedidos/', views.mis_pedidos, name='mis_pedidos'),
     
+    # APIs AJAX
+    path('api/busqueda/', views.busqueda_ajax, name='busqueda_ajax'),
+    
     # URLs para administradores (/admin-panel/)
     path('admin-panel/', views.admin_dashboard, name='admin_dashboard'),
     path('admin-panel/productos/', views.admin_productos, name='admin_productos'),

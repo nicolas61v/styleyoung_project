@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.views.generic import ListView
+from django.http import JsonResponse
 from .models import Producto, Categoria, CarritoCompras, Pedido
 
 
@@ -37,11 +38,15 @@ def productos_lista(request):
     
     busqueda = request.GET.get('busqueda')
     if busqueda:
+        # Búsqueda más inteligente con múltiples campos y relevancia
         productos = productos.filter(
             Q(nombre__icontains=busqueda) |
             Q(marca__icontains=busqueda) |
-            Q(descripcion__icontains=busqueda)
-        )
+            Q(descripcion__icontains=busqueda) |
+            Q(categoria__nombre__icontains=busqueda) |
+            Q(color__icontains=busqueda) |
+            Q(material__icontains=busqueda)
+        ).distinct().order_by('-fecha_creacion')
     
     return render(request, 'usuario/productos.html', {
         'productos': productos,
@@ -82,6 +87,42 @@ def mis_pedidos(request):
     
     return render(request, 'usuario/mis_pedidos.html', {
         'pedidos': pedidos
+    })
+
+
+def busqueda_ajax(request):
+    """Vista AJAX para búsqueda de productos en tiempo real"""
+    query = request.GET.get('q', '').strip()
+    
+    if len(query) < 2:
+        return JsonResponse({'productos': [], 'count': 0})
+    
+    productos = Producto.objects.filter(
+        Q(nombre__icontains=query) |
+        Q(marca__icontains=query) |
+        Q(descripcion__icontains=query) |
+        Q(categoria__nombre__icontains=query) |
+        Q(color__icontains=query) |
+        Q(material__icontains=query)
+    ).distinct()[:10]  # Limitar a 10 resultados
+    
+    productos_data = []
+    for producto in productos:
+        productos_data.append({
+            'id': producto.id,
+            'nombre': producto.nombre,
+            'marca': producto.marca,
+            'precio': str(producto.precio),
+            'categoria': producto.categoria.nombre,
+            'color': producto.color,
+            'stock_total': producto.stock_total(),
+            'url': f'/producto/{producto.id}/',
+        })
+    
+    return JsonResponse({
+        'productos': productos_data,
+        'count': len(productos_data),
+        'query': query
     })
 
 

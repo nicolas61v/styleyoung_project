@@ -18,10 +18,15 @@
                             <label for="busqueda" class="form-label">Buscar producto</label>
                             <div class="input-group">
                                 <input type="text" class="form-control" id="busqueda" name="busqueda" 
-                                       value="{{ request.GET.busqueda }}" placeholder="Nombre, marca...">
+                                       value="{{ request.GET.busqueda }}" placeholder="Nombre, marca..."
+                                       onkeyup="filtrarProductosEnTiempoReal(this.value)">
                                 <button class="btn btn-outline-primary" type="submit">
                                     <i class="bi bi-search"></i>
                                 </button>
+                            </div>
+                            <div id="sugerencias-busqueda" class="mt-2" style="display: none;">
+                                <small class="text-muted">Resultados en tiempo real:</small>
+                                <div id="resultados-tiempo-real"></div>
                             </div>
                         </div>
                         
@@ -145,5 +150,137 @@
 .producto-card:hover {
     transform: translateY(-5px);
 }
+
+.producto-oculto {
+    display: none !important;
+}
+
+.sugerencia-item {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+
+.sugerencia-item:hover {
+    background-color: #f8f9fa;
+}
+
+.highlight {
+    background-color: yellow;
+    font-weight: bold;
+}
 </style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let timeoutId = null;
+let todosLosProductos = [];
+
+// Cargar todos los productos al inicio
+document.addEventListener('DOMContentLoaded', function() {
+    const productCards = document.querySelectorAll('.producto-card');
+    todosLosProductos = Array.from(productCards).map(card => {
+        const nombre = card.querySelector('.card-title').textContent.trim();
+        const marca = card.querySelector('.card-subtitle').textContent.replace('🏷️', '').trim();
+        const descripcion = card.querySelector('.card-text').textContent.trim();
+        
+        return {
+            element: card.parentElement,
+            nombre: nombre.toLowerCase(),
+            marca: marca.toLowerCase(),
+            descripcion: descripcion.toLowerCase(),
+            textoCompleto: `${nombre} ${marca} ${descripcion}`.toLowerCase()
+        };
+    });
+});
+
+function filtrarProductosEnTiempoReal(query) {
+    // Debounce para evitar demasiadas búsquedas
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+        realizarBusqueda(query);
+    }, 300);
+}
+
+function realizarBusqueda(query) {
+    const busqueda = query.toLowerCase().trim();
+    const sugerenciasDiv = document.getElementById('sugerencias-busqueda');
+    const resultadosDiv = document.getElementById('resultados-tiempo-real');
+    
+    if (busqueda === '') {
+        // Mostrar todos los productos
+        todosLosProductos.forEach(producto => {
+            producto.element.classList.remove('producto-oculto');
+        });
+        sugerenciasDiv.style.display = 'none';
+        actualizarContadorProductos(todosLosProductos.length);
+        return;
+    }
+    
+    // Filtrar productos
+    const productosCoincidentes = todosLosProductos.filter(producto => 
+        producto.textoCompleto.includes(busqueda)
+    );
+    
+    // Ocultar/mostrar productos
+    todosLosProductos.forEach(producto => {
+        if (productosCoincidentes.includes(producto)) {
+            producto.element.classList.remove('producto-oculto');
+        } else {
+            producto.element.classList.add('producto-oculto');
+        }
+    });
+    
+    // Mostrar sugerencias
+    if (productosCoincidentes.length > 0) {
+        const sugerencias = productosCoincidentes.slice(0, 5).map(producto => {
+            const nombreOriginal = producto.element.querySelector('.card-title').textContent;
+            const marcaOriginal = producto.element.querySelector('.card-subtitle').textContent.replace('🏷️', '').trim();
+            
+            return `<div class="sugerencia-item" onclick="seleccionarSugerencia('${nombreOriginal}')">
+                        <strong>${highlightText(nombreOriginal, query)}</strong> - ${marcaOriginal}
+                    </div>`;
+        }).join('');
+        
+        resultadosDiv.innerHTML = sugerencias;
+        sugerenciasDiv.style.display = 'block';
+    } else {
+        resultadosDiv.innerHTML = '<div class="text-muted">No se encontraron productos</div>';
+        sugerenciasDiv.style.display = 'block';
+    }
+    
+    actualizarContadorProductos(productosCoincidentes.length);
+}
+
+function highlightText(text, query) {
+    if (!query) return text;
+    const regex = new RegExp(`(${query})`, 'gi');
+    return text.replace(regex, '<span class="highlight">$1</span>');
+}
+
+function seleccionarSugerencia(nombre) {
+    document.getElementById('busqueda').value = nombre;
+    document.getElementById('sugerencias-busqueda').style.display = 'none';
+    realizarBusqueda(nombre);
+}
+
+function actualizarContadorProductos(count) {
+    const contadorElement = document.querySelector('.col-lg-9 h2 + span');
+    if (contadorElement) {
+        contadorElement.textContent = `${count} producto${count !== 1 ? 's' : ''}`;
+    }
+}
+
+// Cerrar sugerencias al hacer click fuera
+document.addEventListener('click', function(event) {
+    const sugerenciasDiv = document.getElementById('sugerencias-busqueda');
+    const busquedaInput = document.getElementById('busqueda');
+    
+    if (!sugerenciasDiv.contains(event.target) && event.target !== busquedaInput) {
+        sugerenciasDiv.style.display = 'none';
+    }
+});
+</script>
 {% endblock %}
