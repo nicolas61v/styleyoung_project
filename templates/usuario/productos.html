@@ -42,6 +42,72 @@
                                 {% endfor %}
                             </select>
                         </div>
+
+                        <!-- Rango de Precio -->
+                        <div class="mb-3">
+                            <label for="precio_min" class="form-label">Rango de Precio</label>
+                            <div class="row">
+                                <div class="col-6">
+                                    <input type="number" class="form-control" name="precio_min" 
+                                           placeholder="Mín" value="{{ request.GET.precio_min }}">
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" class="form-control" name="precio_max" 
+                                           placeholder="Máx" value="{{ request.GET.precio_max }}">
+                                </div>
+                            </div>
+                            <small class="text-muted">Precios en COP</small>
+                        </div>
+
+                        <!-- Color -->
+                        <div class="mb-3">
+                            <label for="color" class="form-label">Color</label>
+                            <select class="form-select" name="color" id="color">
+                                <option value="">Todos los colores</option>
+                                {% for color in colores_disponibles %}
+                                <option value="{{ color }}" {% if request.GET.color == color %}selected{% endif %}>
+                                    {{ color }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Marca -->
+                        <div class="mb-3">
+                            <label for="marca" class="form-label">Marca</label>
+                            <select class="form-select" name="marca" id="marca">
+                                <option value="">Todas las marcas</option>
+                                {% for marca in marcas_disponibles %}
+                                <option value="{{ marca }}" {% if request.GET.marca == marca %}selected{% endif %}>
+                                    {{ marca }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Talla -->
+                        <div class="mb-3">
+                            <label for="talla" class="form-label">Talla</label>
+                            <select class="form-select" name="talla" id="talla">
+                                <option value="">Todas las tallas</option>
+                                {% for talla in tallas_disponibles %}
+                                <option value="{{ talla }}" {% if request.GET.talla == talla %}selected{% endif %}>
+                                    {{ talla }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Solo productos en stock -->
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="solo_stock" id="solo_stock" 
+                                       {% if request.GET.solo_stock %}checked{% endif %}>
+                                <label class="form-check-label" for="solo_stock">
+                                    Solo productos en stock
+                                </label>
+                            </div>
+                        </div>
                         
                         <button type="submit" class="btn btn-primary w-100">
                             <i class="bi bi-filter"></i> Aplicar Filtros
@@ -64,10 +130,36 @@
                 <span class="text-muted">{{ productos|length }} producto{{ productos|length|pluralize }}</span>
             </div>
             
-            {% if request.GET.busqueda %}
+            {% if request.GET.busqueda or request.GET.categoria or request.GET.precio_min or request.GET.precio_max or request.GET.color or request.GET.marca or request.GET.talla or request.GET.solo_stock %}
             <div class="alert alert-info">
-                <i class="bi bi-info-circle"></i> 
-                Resultados para: "<strong>{{ request.GET.busqueda }}</strong>"
+                <i class="bi bi-funnel-fill"></i> 
+                <strong>Filtros aplicados:</strong>
+                {% if request.GET.busqueda %}
+                    <span class="badge bg-primary me-1">Búsqueda: "{{ request.GET.busqueda }}"</span>
+                {% endif %}
+                {% if request.GET.categoria %}
+                    <span class="badge bg-success me-1">Categoría seleccionada</span>
+                {% endif %}
+                {% if request.GET.precio_min or request.GET.precio_max %}
+                    <span class="badge bg-warning me-1">
+                        Precio: ${{ request.GET.precio_min|default:"0" }} - ${{ request.GET.precio_max|default:"∞" }}
+                    </span>
+                {% endif %}
+                {% if request.GET.color %}
+                    <span class="badge bg-info me-1">Color: {{ request.GET.color }}</span>
+                {% endif %}
+                {% if request.GET.marca %}
+                    <span class="badge bg-secondary me-1">Marca: {{ request.GET.marca }}</span>
+                {% endif %}
+                {% if request.GET.talla %}
+                    <span class="badge bg-dark me-1">Talla: {{ request.GET.talla }}</span>
+                {% endif %}
+                {% if request.GET.solo_stock %}
+                    <span class="badge bg-success me-1">Solo en stock</span>
+                {% endif %}
+                <a href="{% url 'tienda:productos' %}" class="btn btn-sm btn-outline-secondary ms-2">
+                    <i class="bi bi-x-circle"></i> Limpiar todos
+                </a>
             </div>
             {% endif %}
             

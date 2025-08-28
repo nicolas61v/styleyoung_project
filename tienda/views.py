@@ -27,18 +27,55 @@ def home(request):
 
 
 def productos_lista(request):
-    """Catálogo de productos para usuarios finales"""
+    """Catálogo de productos para usuarios finales con filtros avanzados"""
     productos = Producto.objects.all()
     categorias = Categoria.objects.all()
     
-    # Filtros básicos por ahora (expandiremos después)
+    # Obtener valores únicos para filtros
+    colores_disponibles = Producto.objects.values_list('color', flat=True).distinct().order_by('color')
+    marcas_disponibles = Producto.objects.values_list('marca', flat=True).distinct().order_by('marca')
+    tallas_disponibles = Talla.objects.values_list('talla', flat=True).distinct().order_by('talla')
+    
+    # Aplicar filtros
     categoria_id = request.GET.get('categoria')
     if categoria_id:
         productos = productos.filter(categoria_id=categoria_id)
     
+    # Filtro por rango de precio
+    precio_min = request.GET.get('precio_min')
+    precio_max = request.GET.get('precio_max')
+    if precio_min:
+        productos = productos.filter(precio__gte=precio_min)
+    if precio_max:
+        productos = productos.filter(precio__lte=precio_max)
+    
+    # Filtro por color
+    color = request.GET.get('color')
+    if color:
+        productos = productos.filter(color__iexact=color)
+    
+    # Filtro por marca
+    marca = request.GET.get('marca')
+    if marca:
+        productos = productos.filter(marca__iexact=marca)
+    
+    # Filtro por talla (productos que tienen esa talla disponible)
+    talla = request.GET.get('talla')
+    if talla:
+        productos = productos.filter(talla__talla=talla, talla__stock__gt=0).distinct()
+    
+    # Filtro solo productos en stock
+    solo_stock = request.GET.get('solo_stock')
+    if solo_stock:
+        productos_con_stock = []
+        for producto in productos:
+            if producto.stock_total() > 0:
+                productos_con_stock.append(producto.id)
+        productos = productos.filter(id__in=productos_con_stock)
+    
+    # Búsqueda de texto
     busqueda = request.GET.get('busqueda')
     if busqueda:
-        # Búsqueda más inteligente con múltiples campos y relevancia
         productos = productos.filter(
             Q(nombre__icontains=busqueda) |
             Q(marca__icontains=busqueda) |
@@ -46,11 +83,17 @@ def productos_lista(request):
             Q(categoria__nombre__icontains=busqueda) |
             Q(color__icontains=busqueda) |
             Q(material__icontains=busqueda)
-        ).distinct().order_by('-fecha_creacion')
+        ).distinct()
+    
+    # Ordenar por fecha de creación
+    productos = productos.order_by('-fecha_creacion')
     
     return render(request, 'usuario/productos.html', {
         'productos': productos,
-        'categorias': categorias
+        'categorias': categorias,
+        'colores_disponibles': colores_disponibles,
+        'marcas_disponibles': marcas_disponibles,
+        'tallas_disponibles': tallas_disponibles,
     })
 
 
