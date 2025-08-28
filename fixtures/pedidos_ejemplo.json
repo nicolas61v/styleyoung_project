@@ -1,0 +1,167 @@
+[
+  {
+    "model": "tienda.pedido",
+    "pk": 1,
+    "fields": {
+      "usuario": 2,
+      "total": "165000.00",
+      "estado": "entregado",
+      "fecha_pedido": "2024-02-01T10:30:00Z",
+      "direccion_entrega": "Carrera 70 #45-23, Medellín"
+    }
+  },
+  {
+    "model": "tienda.pedido",
+    "pk": 2,
+    "fields": {
+      "usuario": 3,
+      "total": "85000.00",
+      "estado": "entregado",
+      "fecha_pedido": "2024-02-05T14:20:00Z",
+      "direccion_entrega": "Calle 50 #20-15, Medellín"
+    }
+  },
+  {
+    "model": "tienda.pedido",
+    "pk": 3,
+    "fields": {
+      "usuario": 4,
+      "total": "120000.00",
+      "estado": "entregado",
+      "fecha_pedido": "2024-02-10T16:45:00Z",
+      "direccion_entrega": "Avenida 80 #30-45, Medellín"
+    }
+  },
+  {
+    "model": "tienda.pedido",
+    "pk": 4,
+    "fields": {
+      "usuario": 2,
+      "total": "230000.00",
+      "estado": "enviado",
+      "fecha_pedido": "2024-02-15T11:15:00Z",
+      "direccion_entrega": "Carrera 70 #45-23, Medellín"
+    }
+  },
+  {
+    "model": "tienda.pedido",
+    "pk": 5,
+    "fields": {
+      "usuario": 3,
+      "total": "125000.00",
+      "estado": "procesando",
+      "fecha_pedido": "2024-02-20T09:30:00Z",
+      "direccion_entrega": "Calle 50 #20-15, Medellín"
+    }
+  },
+  {
+    "model": "tienda.pedido",
+    "pk": 6,
+    "fields": {
+      "usuario": 4,
+      "total": "95000.00",
+      "estado": "pendiente",
+      "fecha_pedido": "2024-02-25T15:50:00Z",
+      "direccion_entrega": "Avenida 80 #30-45, Medellín"
+    }
+  },
+  {
+    "model": "tienda.itempedido",
+    "pk": 1,
+    "fields": {
+      "pedido": 1,
+      "producto": 1,
+      "talla": 3,
+      "cantidad": 2,
+      "precio_unitario": "45000.00"
+    }
+  },
+  {
+    "model": "tienda.itempedido",
+    "pk": 2,
+    "fields": {
+      "pedido": 1,
+      "producto": 4,
+      "talla": 18,
+      "cantidad": 1,
+      "precio_unitario": "55000.00"
+    }
+  },
+  {
+    "model": "tienda.itempedido",
+    "pk": 3,
+    "fields": {
+      "pedido": 1,
+      "producto": 5,
+      "talla": 23,
+      "cantidad": 1,
+      "precio_unitario": "40000.00"
+    }
+  },
+  {
+    "model": "tienda.itempedido",
+    "pk": 4,
+    "fields": {
+      "pedido": 2,
+      "producto": 2,
+      "talla": 8,
+      "cantidad": 1,
+      "precio_unitario": "85000.00"
+    }
+  },
+  {
+    "model": "tienda.itempedido",
+    "pk": 5,
+    "fields": {
+      "pedido": 3,
+      "producto": 3,
+      "talla": 13,
+      "cantidad": 1,
+      "precio_unitario": "120000.00"
+    }
+  },
+  {
+    "model": "tienda.itempedido",
+    "pk": 6,
+    "fields": {
+      "pedido": 4,
+      "producto": 6,
+      "talla": 28,
+      "cantidad": 1,
+      "precio_unitario": "150000.00"
+    }
+  },
+  {
+    "model": "tienda.itempedido",
+    "pk": 7,
+    "fields": {
+      "pedido": 4,
+      "producto": 8,
+      "talla": 36,
+      "cantidad": 1,
+      "precio_unitario": "95000.00"
+    }
+  },
+  {
+    "model": "tienda.itempedido",
+    "pk": 8,
+    "fields": {
+      "pedido": 5,
+      "producto": 13,
+      "talla": 48,
+      "cantidad": 1,
+      "precio_unitario": "125000.00"
+    }
+  },
+  {
+    "model": "tienda.itempedido",
+    "pk": 9,
+    "fields": {
+      "pedido": 6,
+      "producto": 8,
+      "talla": 35,
+      "cantidad": 1,
+      "precio_unitario": "95000.00"
+    }
+  }
+]

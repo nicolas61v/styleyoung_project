@@ -1,0 +1,426 @@
+[
+  {
+    "model": "usuarios.usuario",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$VYD5L4EuiQ3K7q9vA4ZU8Z$Xj7w9LGp4Qx8Yc2vN+8dFt5Ry1Iz9Kx/mU3nX7pW9qE=",
+      "last_login": null,
+      "is_superuser": true,
+      "username": "admin",
+      "first_name": "",
+      "last_name": "",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2024-01-01T00:00:00Z",
+      "nombre": "Administrador StyleYoung",
+      "email": "admin@styleyoung.com",
+      "direccion": "Calle Principal 123, Medellín",
+      "telefono": "+57 300 123 4567",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "usuarios.usuario",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$VYD5L4EuiQ3K7q9vA4ZU8Z$Xj7w9LGp4Qx8Yc2vN+8dFt5Ry1Iz9Kx/mU3nX7pW9qE=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "maria_garcia",
+      "first_name": "",
+      "last_name": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-01-15T10:00:00Z",
+      "nombre": "María García",
+      "email": "maria@email.com",
+      "direccion": "Carrera 70 #45-23, Medellín",
+      "telefono": "+57 315 876 5432",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "usuarios.usuario",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$VYD5L4EuiQ3K7q9vA4ZU8Z$Xj7w9LGp4Qx8Yc2vN+8dFt5Ry1Iz9Kx/mU3nX7pW9qE=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "ana_rodriguez",
+      "first_name": "",
+      "last_name": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-02-01T14:30:00Z",
+      "nombre": "Ana Rodríguez",
+      "email": "ana@email.com",
+      "direccion": "Calle 50 #20-15, Medellín",
+      "telefono": "+57 320 654 3210",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "usuarios.usuario",
+    "pk": 4,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$VYD5L4EuiQ3K7q9vA4ZU8Z$Xj7w9LGp4Qx8Yc2vN+8dFt5Ry1Iz9Kx/mU3nX7pW9qE=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "sofia_lopez",
+      "first_name": "",
+      "last_name": "",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-02-15T16:45:00Z",
+      "nombre": "Sofía López",
+      "email": "sofia@email.com",
+      "direccion": "Avenida 80 #30-45, Medellín",
+      "telefono": "+57 310 987 6543",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "tienda.categoria",
+    "pk": 1,
+    "fields": {
+      "nombre": "Blusas",
+      "descripcion": "Blusas casuales y formales para jóvenes. Perfectas para cualquier ocasión, desde el trabajo hasta salidas con amigas."
+    }
+  },
+  {
+    "model": "tienda.categoria",
+    "pk": 2,
+    "fields": {
+      "nombre": "Pantalones",
+      "descripcion": "Pantalones de mezclilla, leggings y pantalones formales. Cómodos y a la moda para el día a día."
+    }
+  },
+  {
+    "model": "tienda.categoria",
+    "pk": 3,
+    "fields": {
+      "nombre": "Vestidos",
+      "descripcion": "Vestidos casuales, elegantes y de fiesta. Diseños únicos que resaltan tu personalidad y estilo."
+    }
+  },
+  {
+    "model": "tienda.categoria",
+    "pk": 4,
+    "fields": {
+      "nombre": "Accesorios",
+      "descripcion": "Collares, pulseras, bolsos y más. Los detalles perfectos para complementar tu outfit."
+    }
+  },
+  {
+    "model": "tienda.categoria",
+    "pk": 5,
+    "fields": {
+      "nombre": "Chaquetas",
+      "descripcion": "Chaquetas de mezclilla, blazers y abrigos. Perfectas para completar tu look en cualquier temporada."
+    }
+  },
+  {
+    "model": "tienda.producto",
+    "pk": 1,
+    "fields": {
+      "nombre": "Blusa Casual Azul",
+      "descripcion": "Hermosa blusa casual en color azul cielo, perfecta para el día a día. Fabricada en algodón suave y transpirable.",
+      "precio": "45000.00",
+      "marca": "StyleYoung",
+      "color": "Azul",
+      "material": "Algodón",
+      "categoria": 1,
+      "fecha_creacion": "2024-01-10T09:00:00Z",
+      "total_vendidos": 45
+    }
+  },
+  {
+    "model": "tienda.producto",
+    "pk": 2,
+    "fields": {
+      "nombre": "Jean Skinny Negro",
+      "descripcion": "Jean skinny de corte moderno en color negro. Ajuste perfecto y muy cómodo para uso diario.",
+      "precio": "85000.00",
+      "marca": "DenimStyle",
+      "color": "Negro",
+      "material": "Mezclilla",
+      "categoria": 2,
+      "fecha_creacion": "2024-01-12T10:30:00Z",
+      "total_vendidos": 38
+    }
+  },
+  {
+    "model": "tienda.producto",
+    "pk": 3,
+    "fields": {
+      "nombre": "Vestido Floral Primavera",
+      "descripcion": "Hermoso vestido con estampado floral, ideal para la primavera. Tela ligera y fresca con caída elegante.",
+      "precio": "120000.00",
+      "marca": "FloralGarden",
+      "color": "Multicolor",
+      "material": "Poliéster",
+      "categoria": 3,
+      "fecha_creacion": "2024-01-15T14:20:00Z",
+      "total_vendidos": 32
+    }
+  },
+  {
+    "model": "tienda.producto",
+    "pk": 4,
+    "fields": {
+      "nombre": "Blusa Blanca Elegante",
+      "descripcion": "Blusa blanca clásica de corte elegante, perfecta para ocasiones formales y el trabajo.",
+      "precio": "55000.00",
+      "marca": "ClassicWear",
+      "color": "Blanco",
+      "material": "Seda Sintética",
+      "categoria": 1,
+      "fecha_creacion": "2024-01-18T11:15:00Z",
+      "total_vendidos": 28
+    }
+  },
+  {
+    "model": "tienda.producto",
+    "pk": 5,
+    "fields": {
+      "nombre": "Leggings Deportivos",
+      "descripcion": "Leggings negros deportivos con tecnología dry-fit. Perfectos para ejercicio y uso casual.",
+      "precio": "40000.00",
+      "marca": "SportLife",
+      "color": "Negro",
+      "material": "Lycra",
+      "categoria": 2,
+      "fecha_creacion": "2024-01-20T15:45:00Z",
+      "total_vendidos": 25
+    }
+  },
+  {
+    "model": "tienda.producto",
+    "pk": 6,
+    "fields": {
+      "nombre": "Vestido Rojo Fiesta",
+      "descripcion": "Vestido rojo elegante para ocasiones especiales. Corte ajustado que resalta la figura.",
+      "precio": "150000.00",
+      "marca": "PartyGlam",
+      "color": "Rojo",
+      "material": "Satén",
+      "categoria": 3,
+      "fecha_creacion": "2024-01-22T12:00:00Z",
+      "total_vendidos": 22
+    }
+  },
+  {
+    "model": "tienda.producto",
+    "pk": 7,
+    "fields": {
+      "nombre": "Collar Dorado Moderno",
+      "descripcion": "Collar dorado con diseño moderno y minimalista. Perfecto para complementar cualquier outfit.",
+      "precio": "35000.00",
+      "marca": "GoldStyle",
+      "color": "Dorado",
+      "material": "Aleación",
+      "categoria": 4,
+      "fecha_creacion": "2024-01-25T16:30:00Z",
+      "total_vendidos": 20
+    }
+  },
+  {
+    "model": "tienda.producto",
+    "pk": 8,
+    "fields": {
+      "nombre": "Chaqueta de Mezclilla",
+      "descripcion": "Chaqueta de mezclilla clásica, perfecta para looks casuales. Diseño atemporal y versátil.",
+      "precio": "95000.00",
+      "marca": "DenimClassic",
+      "color": "Azul",
+      "material": "Mezclilla",
+      "categoria": 5,
+      "fecha_creacion": "2024-01-28T13:45:00Z",
+      "total_vendidos": 18
+    }
+  },
+  {
+    "model": "tienda.producto",
+    "pk": 9,
+    "fields": {
+      "nombre": "Blusa Rosa Romántica",
+      "descripcion": "Delicada blusa rosa con detalles románticos. Perfecta para citas y ocasiones especiales.",
+      "precio": "48000.00",
+      "marca": "RomanticStyle",
+      "color": "Rosa",
+      "material": "Chifón",
+      "categoria": 1,
+      "fecha_creacion": "2024-02-01T10:20:00Z",
+      "total_vendidos": 16
+    }
+  },
+  {
+    "model": "tienda.producto",
+    "pk": 10,
+    "fields": {
+      "nombre": "Pantalón Formal Gris",
+      "descripcion": "Pantalón formal de corte recto en color gris. Ideal para el trabajo y ocasiones elegantes.",
+      "precio": "75000.00",
+      "marca": "OfficeLook",
+      "color": "Gris",
+      "material": "Poliéster",
+      "categoria": 2,
+      "fecha_creacion": "2024-02-03T14:10:00Z",
+      "total_vendidos": 15
+    }
+  },
+  {
+    "model": "tienda.producto",
+    "pk": 11,
+    "fields": {
+      "nombre": "Vestido Negro Básico",
+      "descripcion": "El clásico vestido negro que toda mujer debe tener. Versátil y elegante para múltiples ocasiones.",
+      "precio": "110000.00",
+      "marca": "ClassicBlack",
+      "color": "Negro",
+      "material": "Algodón-Elastano",
+      "categoria": 3,
+      "fecha_creacion": "2024-02-05T11:50:00Z",
+      "total_vendidos": 14
+    }
+  },
+  {
+    "model": "tienda.producto",
+    "pk": 12,
+    "fields": {
+      "nombre": "Bolso Crossbody Camel",
+      "descripcion": "Bolso crossbody en color camel, perfecto para el día a día. Diseño funcional con múltiples compartimentos.",
+      "precio": "65000.00",
+      "marca": "BagTrend",
+      "color": "Camel",
+      "material": "Cuero Sintético",
+      "categoria": 4,
+      "fecha_creacion": "2024-02-08T15:25:00Z",
+      "total_vendidos": 12
+    }
+  },
+  {
+    "model": "tienda.producto",
+    "pk": 13,
+    "fields": {
+      "nombre": "Blazer Negro Ejecutivo",
+      "descripcion": "Blazer negro de corte ejecutivo. Perfecto para reuniones de trabajo y ocasiones formales.",
+      "precio": "125000.00",
+      "marca": "ExecutiveWear",
+      "color": "Negro",
+      "material": "Poliéster-Viscosa",
+      "categoria": 5,
+      "fecha_creacion": "2024-02-10T09:40:00Z",
+      "total_vendidos": 11
+    }
+  },
+  {
+    "model": "tienda.producto",
+    "pk": 14,
+    "fields": {
+      "nombre": "Blusa Verde Esmeralda",
+      "descripcion": "Blusa en hermoso color verde esmeralda. Tela satinada que aporta elegancia a tu look.",
+      "precio": "52000.00",
+      "marca": "EmeraldStyle",
+      "color": "Verde",
+      "material": "Satén",
+      "categoria": 1,
+      "fecha_creacion": "2024-02-12T12:15:00Z",
+      "total_vendidos": 10
+    }
+  },
+  {
+    "model": "tienda.producto",
+    "pk": 15,
+    "fields": {
+      "nombre": "Jean de Tiro Alto",
+      "descripcion": "Jean de tiro alto en lavado medio. Estilo vintage que estiliza la figura y está muy de moda.",
+      "precio": "90000.00",
+      "marca": "VintageStyle",
+      "color": "Azul",
+      "material": "Mezclilla",
+      "categoria": 2,
+      "fecha_creacion": "2024-02-15T16:00:00Z",
+      "total_vendidos": 9
+    }
+  },
+  {
+    "model": "tienda.producto",
+    "pk": 16,
+    "fields": {
+      "nombre": "Vestido Midi Lunares",
+      "descripcion": "Vestido midi con estampado de lunares blancos sobre fondo negro. Estilo retro muy femenino.",
+      "precio": "105000.00",
+      "marca": "RetroChic",
+      "color": "Negro con Blanco",
+      "material": "Viscosa",
+      "categoria": 3,
+      "fecha_creacion": "2024-02-18T13:30:00Z",
+      "total_vendidos": 8
+    }
+  },
+  {
+    "model": "tienda.producto",
+    "pk": 17,
+    "fields": {
+      "nombre": "Aretes Plateados Largos",
+      "descripcion": "Aretes plateados de diseño alargado. Añaden elegancia y sofisticación a cualquier outfit.",
+      "precio": "25000.00",
+      "marca": "SilverTrend",
+      "color": "Plateado",
+      "material": "Aleación Plateada",
+      "categoria": 4,
+      "fecha_creacion": "2024-02-20T10:45:00Z",
+      "total_vendidos": 7
+    }
+  },
+  {
+    "model": "tienda.producto",
+    "pk": 18,
+    "fields": {
+      "nombre": "Cardigan Oversized Beige",
+      "descripcion": "Cardigan oversized en color beige, perfecto para looks cómodos y trendy. Súper suave y abrigador.",
+      "precio": "80000.00",
+      "marca": "CozyWear",
+      "color": "Beige",
+      "material": "Acrílico",
+      "categoria": 5,
+      "fecha_creacion": "2024-02-22T14:20:00Z",
+      "total_vendidos": 6
+    }
+  },
+  {
+    "model": "tienda.producto",
+    "pk": 19,
+    "fields": {
+      "nombre": "Crop Top Estampado",
+      "descripcion": "Crop top con estampado tropical colorido. Perfecto para looks juveniles y de verano.",
+      "precio": "35000.00",
+      "marca": "TropicalVibes",
+      "color": "Multicolor",
+      "material": "Algodón",
+      "categoria": 1,
+      "fecha_creacion": "2024-02-25T11:10:00Z",
+      "total_vendidos": 5
+    }
+  },
+  {
+    "model": "tienda.producto",
+    "pk": 20,
+    "fields": {
+      "nombre": "Pantalón Palazzo Negro",
+      "descripcion": "Pantalón palazzo negro de tiro alto. Súper cómodo y elegante, perfecto para ocasiones especiales.",
+      "precio": "68000.00",
+      "marca": "FlowStyle",
+      "color": "Negro",
+      "material": "Poliéster",
+      "categoria": 2,
+      "fecha_creacion": "2024-02-28T15:55:00Z",
+      "total_vendidos": 4
+    }
+  }
+]

@@ -1,0 +1,434 @@
+[
+  {
+    "model": "tienda.talla",
+    "pk": 1,
+    "fields": {
+      "talla": "XS",
+      "stock": 8,
+      "producto": 1
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 2,
+    "fields": {
+      "talla": "S",
+      "stock": 12,
+      "producto": 1
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 3,
+    "fields": {
+      "talla": "M",
+      "stock": 15,
+      "producto": 1
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 4,
+    "fields": {
+      "talla": "L",
+      "stock": 10,
+      "producto": 1
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 5,
+    "fields": {
+      "talla": "XL",
+      "stock": 5,
+      "producto": 1
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 6,
+    "fields": {
+      "talla": "XS",
+      "stock": 6,
+      "producto": 2
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 7,
+    "fields": {
+      "talla": "S",
+      "stock": 8,
+      "producto": 2
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 8,
+    "fields": {
+      "talla": "M",
+      "stock": 12,
+      "producto": 2
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 9,
+    "fields": {
+      "talla": "L",
+      "stock": 14,
+      "producto": 2
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 10,
+    "fields": {
+      "talla": "XL",
+      "stock": 7,
+      "producto": 2
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 11,
+    "fields": {
+      "talla": "XS",
+      "stock": 4,
+      "producto": 3
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 12,
+    "fields": {
+      "talla": "S",
+      "stock": 9,
+      "producto": 3
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 13,
+    "fields": {
+      "talla": "M",
+      "stock": 11,
+      "producto": 3
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 14,
+    "fields": {
+      "talla": "L",
+      "stock": 8,
+      "producto": 3
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 15,
+    "fields": {
+      "talla": "XL",
+      "stock": 3,
+      "producto": 3
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 16,
+    "fields": {
+      "talla": "XS",
+      "stock": 7,
+      "producto": 4
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 17,
+    "fields": {
+      "talla": "S",
+      "stock": 10,
+      "producto": 4
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 18,
+    "fields": {
+      "talla": "M",
+      "stock": 13,
+      "producto": 4
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 19,
+    "fields": {
+      "talla": "L",
+      "stock": 9,
+      "producto": 4
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 20,
+    "fields": {
+      "talla": "XL",
+      "stock": 6,
+      "producto": 4
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 21,
+    "fields": {
+      "talla": "XS",
+      "stock": 5,
+      "producto": 5
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 22,
+    "fields": {
+      "talla": "S",
+      "stock": 11,
+      "producto": 5
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 23,
+    "fields": {
+      "talla": "M",
+      "stock": 15,
+      "producto": 5
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 24,
+    "fields": {
+      "talla": "L",
+      "stock": 12,
+      "producto": 5
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 25,
+    "fields": {
+      "talla": "XL",
+      "stock": 8,
+      "producto": 5
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 26,
+    "fields": {
+      "talla": "XS",
+      "stock": 3,
+      "producto": 6
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 27,
+    "fields": {
+      "talla": "S",
+      "stock": 6,
+      "producto": 6
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 28,
+    "fields": {
+      "talla": "M",
+      "stock": 8,
+      "producto": 6
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 29,
+    "fields": {
+      "talla": "L",
+      "stock": 5,
+      "producto": 6
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 30,
+    "fields": {
+      "talla": "XL",
+      "stock": 2,
+      "producto": 6
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 31,
+    "fields": {
+      "talla": "S",
+      "stock": 12,
+      "producto": 7
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 32,
+    "fields": {
+      "talla": "M",
+      "stock": 15,
+      "producto": 7
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 33,
+    "fields": {
+      "talla": "L",
+      "stock": 8,
+      "producto": 7
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 34,
+    "fields": {
+      "talla": "XS",
+      "stock": 4,
+      "producto": 8
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 35,
+    "fields": {
+      "talla": "S",
+      "stock": 9,
+      "producto": 8
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 36,
+    "fields": {
+      "talla": "M",
+      "stock": 11,
+      "producto": 8
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 37,
+    "fields": {
+      "talla": "L",
+      "stock": 7,
+      "producto": 8
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 38,
+    "fields": {
+      "talla": "XL",
+      "stock": 5,
+      "producto": 8
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 39,
+    "fields": {
+      "talla": "XS",
+      "stock": 6,
+      "producto": 9
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 40,
+    "fields": {
+      "talla": "S",
+      "stock": 10,
+      "producto": 9
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 41,
+    "fields": {
+      "talla": "M",
+      "stock": 12,
+      "producto": 9
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 42,
+    "fields": {
+      "talla": "L",
+      "stock": 8,
+      "producto": 9
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 43,
+    "fields": {
+      "talla": "XL",
+      "stock": 4,
+      "producto": 9
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 44,
+    "fields": {
+      "talla": "XS",
+      "stock": 5,
+      "producto": 10
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 45,
+    "fields": {
+      "talla": "S",
+      "stock": 8,
+      "producto": 10
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 46,
+    "fields": {
+      "talla": "M",
+      "stock": 10,
+      "producto": 10
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 47,
+    "fields": {
+      "talla": "L",
+      "stock": 7,
+      "producto": 10
+    }
+  },
+  {
+    "model": "tienda.talla",
+    "pk": 48,
+    "fields": {
+      "talla": "XL",
+      "stock": 3,
+      "producto": 10
+    }
+  }
+]
