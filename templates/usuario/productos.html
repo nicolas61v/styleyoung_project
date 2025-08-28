@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block title %}Productos - StyleYoung{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Filtros Sidebar -->
+        <div class="col-lg-3 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="bi bi-funnel"></i> Filtros</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get">
+                        <!-- Búsqueda -->
+                        <div class="mb-3">
+                            <label for="busqueda" class="form-label">Buscar producto</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="busqueda" name="busqueda" 
+                                       value="{{ request.GET.busqueda }}" placeholder="Nombre, marca...">
+                                <button class="btn btn-outline-primary" type="submit">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Categoría -->
+                        <div class="mb-3">
+                            <label for="categoria" class="form-label">Categoría</label>
+                            <select class="form-select" name="categoria" id="categoria">
+                                <option value="">Todas las categorías</option>
+                                {% for categoria in categorias %}
+                                <option value="{{ categoria.id }}" {% if request.GET.categoria == categoria.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ categoria.nombre }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-filter"></i> Aplicar Filtros
+                        </button>
+                        
+                        {% if request.GET %}
+                        <a href="{% url 'tienda:productos' %}" class="btn btn-outline-secondary w-100 mt-2">
+                            <i class="bi bi-x-circle"></i> Limpiar Filtros
+                        </a>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Lista de Productos -->
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Nuestros Productos</h2>
+                <span class="text-muted">{{ productos|length }} producto{{ productos|length|pluralize }}</span>
+            </div>
+            
+            {% if request.GET.busqueda %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> 
+                Resultados para: "<strong>{{ request.GET.busqueda }}</strong>"
+            </div>
+            {% endif %}
+            
+            <div class="row">
+                {% for producto in productos %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100 shadow-sm producto-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title">{{ producto.nombre }}</h5>
+                                <span class="badge bg-primary">{{ producto.categoria.nombre }}</span>
+                            </div>
+                            
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                <i class="bi bi-tag"></i> {{ producto.marca }}
+                            </h6>
+                            
+                            <p class="card-text">{{ producto.descripcion|truncatewords:12 }}</p>
+                            
+                            <div class="row text-center mb-3">
+                                <div class="col-4">
+                                    <small class="text-muted">Color</small><br>
+                                    <span class="badge bg-secondary">{{ producto.color }}</span>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted">Material</small><br>
+                                    <span class="badge bg-info">{{ producto.material }}</span>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted">Stock</small><br>
+                                    <span class="badge {% if producto.stock_total > 5 %}bg-success{% elif producto.stock_total > 0 %}bg-warning{% else %}bg-danger{% endif %}">
+                                        {{ producto.stock_total }}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h4 text-primary mb-0">${{ producto.precio }}</span>
+                                {% if producto.stock_total > 0 %}
+                                    <span class="text-success"><i class="bi bi-check-circle"></i> Disponible</span>
+                                {% else %}
+                                    <span class="text-danger"><i class="bi bi-x-circle"></i> Agotado</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="card-footer">
+                            <a href="{% url 'tienda:producto_detalle' producto.id %}" class="btn btn-primary w-100">
+                                <i class="bi bi-eye"></i> Ver Detalles
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-search display-1 text-muted"></i>
+                    <h3 class="mt-3">No hay productos</h3>
+                    {% if request.GET %}
+                    <p class="text-muted">No se encontraron productos que coincidan con los filtros aplicados.</p>
+                    <a href="{% url 'tienda:productos' %}" class="btn btn-primary">
+                        <i class="bi bi-arrow-left"></i> Ver Todos los Productos
+                    </a>
+                    {% else %}
+                    <p class="text-muted">Aún no hay productos disponibles en la tienda.</p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.producto-card {
+    transition: transform 0.2s;
+}
+
+.producto-card:hover {
+    transform: translateY(-5px);
+}
+</style>
+{% endblock %}

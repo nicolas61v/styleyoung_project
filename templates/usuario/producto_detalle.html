@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ producto.nombre }} - StyleYoung{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'tienda:home' %}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'tienda:productos' %}">Productos</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'tienda:productos' %}?categoria={{ producto.categoria.id }}">{{ producto.categoria.nombre }}</a></li>
+            <li class="breadcrumb-item active">{{ producto.nombre }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Imagen del producto -->
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+                <div class="card-body text-center py-5">
+                    <i class="bi bi-image display-1 text-muted"></i>
+                    <p class="text-muted mt-3">Imagen del producto</p>
+                    <small class="text-muted">{{ producto.nombre }}</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detalles del producto -->
+        <div class="col-lg-6">
+            <div class="mb-3">
+                <span class="badge bg-primary fs-6">{{ producto.categoria.nombre }}</span>
+            </div>
+            
+            <h1 class="display-5 fw-bold">{{ producto.nombre }}</h1>
+            <h2 class="text-muted mb-3">{{ producto.marca }}</h2>
+            
+            <div class="mb-4">
+                <span class="h2 text-primary">${{ producto.precio }}</span>
+            </div>
+            
+            <!-- Información adicional -->
+            <div class="row mb-4">
+                <div class="col-md-4 mb-2">
+                    <strong>Color:</strong><br>
+                    <span class="badge bg-secondary">{{ producto.color }}</span>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <strong>Material:</strong><br>
+                    <span class="badge bg-info">{{ producto.material }}</span>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <strong>Stock Total:</strong><br>
+                    <span class="badge {% if producto.stock_total > 5 %}bg-success{% elif producto.stock_total > 0 %}bg-warning{% else %}bg-danger{% endif %}">
+                        {{ producto.stock_total }} unidades
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Descripción -->
+            <div class="mb-4">
+                <h5>Descripción</h5>
+                <p class="text-muted">{{ producto.descripcion }}</p>
+            </div>
+            
+            <!-- Tallas disponibles -->
+            <div class="mb-4">
+                <h5>Tallas Disponibles</h5>
+                {% if tallas_disponibles %}
+                <div class="row">
+                    {% for talla in tallas_disponibles %}
+                    <div class="col-6 col-md-4 col-lg-3 mb-2">
+                        <div class="card text-center">
+                            <div class="card-body py-2">
+                                <h6 class="card-title mb-1">{{ talla.get_talla_display }}</h6>
+                                <small class="text-muted">{{ talla.stock }} disponibles</small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i> 
+                    No hay tallas disponibles en este momento.
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Botones de acción -->
+            {% if user.is_authenticated %}
+                {% if tallas_disponibles %}
+                <form method="post" action="#" class="mb-3">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <select class="form-select" name="talla_id" required>
+                                <option value="">Selecciona una talla</option>
+                                {% for talla in tallas_disponibles %}
+                                <option value="{{ talla.id }}">{{ talla.get_talla_display }} ({{ talla.stock }} disponibles)</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <input type="number" class="form-control" name="cantidad" value="1" min="1" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mt-2">
+                        <i class="bi bi-cart-plus"></i> Agregar al Carrito
+                    </button>
+                </form>
+                {% else %}
+                <div class="alert alert-danger">
+                    <i class="bi bi-x-circle"></i> 
+                    Producto agotado. No se puede agregar al carrito.
+                </div>
+                {% endif %}
+            {% else %}
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle"></i> 
+                <a href="{% url 'auth:login' %}">Inicia sesión</a> para agregar productos al carrito.
+            </div>
+            {% endif %}
+            
+            <!-- Botones adicionales -->
+            <div class="d-flex gap-2 mt-3">
+                <a href="{% url 'tienda:productos' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver a Productos
+                </a>
+                {% if user.is_authenticated %}
+                <a href="{% url 'tienda:carrito' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-cart"></i> Ver Carrito
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Productos relacionados -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3>Productos Similares</h3>
+            <p class="text-muted">Otros productos de la categoría {{ producto.categoria.nombre }}</p>
+            <div class="text-center py-4">
+                <a href="{% url 'tienda:productos' %}?categoria={{ producto.categoria.id }}" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-right"></i> Ver Más de {{ producto.categoria.nombre }}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

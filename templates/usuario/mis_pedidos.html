@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis Pedidos - StyleYoung{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-bag-check"></i> Mis Pedidos</h2>
+        <a href="{% url 'tienda:productos' %}" class="btn btn-primary">
+            <i class="bi bi-plus"></i> Hacer Nuevo Pedido
+        </a>
+    </div>
+    
+    {% if pedidos %}
+    <div class="row">
+        {% for pedido in pedidos %}
+        <div class="col-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col-md-3">
+                            <strong>Pedido #{{ pedido.id }}</strong>
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-muted">Fecha:</small><br>
+                            {{ pedido.fecha_pedido|date:"d/m/Y H:i" }}
+                        </div>
+                        <div class="col-md-3">
+                            <small class="text-muted">Total:</small><br>
+                            <strong class="text-primary">${{ pedido.total }}</strong>
+                        </div>
+                        <div class="col-md-3">
+                            <span class="badge 
+                                {% if pedido.estado == 'pendiente' %}bg-warning
+                                {% elif pedido.estado == 'procesando' %}bg-info
+                                {% elif pedido.estado == 'enviado' %}bg-primary
+                                {% elif pedido.estado == 'entregado' %}bg-success
+                                {% else %}bg-danger
+                                {% endif %} fs-6">
+                                {{ pedido.get_estado_display }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6>Productos:</h6>
+                            {% for item in pedido.itempedido_set.all %}
+                            <div class="d-flex justify-content-between align-items-center py-1 {% if not forloop.last %}border-bottom{% endif %}">
+                                <div>
+                                    <span>{{ item.cantidad }}x {{ item.producto.nombre }}</span>
+                                    <small class="text-muted">(Talla {{ item.talla.get_talla_display }})</small>
+                                </div>
+                                <span class="text-muted">${{ item.calcular_subtotal }}</span>
+                            </div>
+                            {% empty %}
+                            <p class="text-muted">No hay items en este pedido.</p>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-4">
+                            <h6>Dirección de Entrega:</h6>
+                            <p class="text-muted">{{ pedido.direccion_entrega }}</p>
+                            
+                            {% if pedido.estado == 'pendiente' %}
+                            <button class="btn btn-outline-danger btn-sm" disabled>
+                                <i class="bi bi-x-circle"></i> Cancelar Pedido
+                            </button>
+                            {% elif pedido.estado == 'entregado' %}
+                            <button class="btn btn-outline-primary btn-sm" disabled>
+                                <i class="bi bi-arrow-repeat"></i> Reordenar
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="progress">
+                        <div class="progress-bar 
+                            {% if pedido.estado == 'pendiente' %}bg-warning{% endif %}
+                            {% if pedido.estado == 'procesando' %}bg-info{% endif %}
+                            {% if pedido.estado == 'enviado' %}bg-primary{% endif %}
+                            {% if pedido.estado == 'entregado' %}bg-success{% endif %}
+                            {% if pedido.estado == 'cancelado' %}bg-danger{% endif %}"
+                            style="width: 
+                            {% if pedido.estado == 'pendiente' %}25%
+                            {% elif pedido.estado == 'procesando' %}50%
+                            {% elif pedido.estado == 'enviado' %}75%
+                            {% elif pedido.estado == 'entregado' %}100%
+                            {% else %}100%
+                            {% endif %}">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <small class="text-muted">Pendiente</small>
+                        <small class="text-muted">Procesando</small>
+                        <small class="text-muted">Enviado</small>
+                        <small class="text-muted">Entregado</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-bag-x display-1 text-muted"></i>
+        <h3 class="mt-4">No tienes pedidos</h3>
+        <p class="text-muted mb-4">Aún no has realizado ningún pedido en StyleYoung.</p>
+        <a href="{% url 'tienda:productos' %}" class="btn btn-primary btn-lg">
+            <i class="bi bi-bag-heart"></i> Explorar Productos
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

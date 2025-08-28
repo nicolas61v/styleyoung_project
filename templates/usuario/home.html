@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}StyleYoung - Inicio{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold">¡Bienvenida a StyleYoung!</h1>
+                <p class="lead">Encuentra la moda perfecta para ti. Ropa femenina moderna y trendy para jóvenes de 11 a 40 años.</p>
+                <a href="{% url 'tienda:productos' %}" class="btn btn-light btn-lg">
+                    <i class="bi bi-bag-heart"></i> Ver Productos
+                </a>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="bi bi-person-dress display-1"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categorías -->
+<section class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Nuestras Categorías</h2>
+        <div class="row">
+            {% for categoria in categorias %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <i class="bi bi-tags-fill text-primary display-4 mb-3"></i>
+                        <h5 class="card-title">{{ categoria.nombre }}</h5>
+                        <p class="card-text">{{ categoria.descripcion|truncatewords:10 }}</p>
+                        <a href="{% url 'tienda:productos' %}?categoria={{ categoria.id }}" class="btn btn-outline-primary">
+                            Ver Productos
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p class="text-muted">No hay categorías disponibles.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Productos Destacados -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Productos Destacados</h2>
+        <div class="row">
+            {% for producto in productos_destacados %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ producto.nombre }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ producto.marca }}</h6>
+                        <p class="card-text">{{ producto.descripcion|truncatewords:15 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="h5 text-primary mb-0">${{ producto.precio }}</span>
+                            <span class="badge bg-secondary">{{ producto.color }}</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'tienda:producto_detalle' producto.id %}" class="btn btn-primary w-100">
+                            Ver Detalles
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p class="text-muted">No hay productos disponibles.</p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if productos_destacados %}
+        <div class="text-center mt-4">
+            <a href="{% url 'tienda:productos' %}" class="btn btn-primary btn-lg">
+                Ver Todos los Productos
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <h2>¿Lista para renovar tu guardarropa?</h2>
+        <p class="lead">Únete a miles de jóvenes que ya confían en StyleYoung para verse increíbles.</p>
+        {% if not user.is_authenticated %}
+        <a href="{% url 'auth:registro' %}" class="btn btn-light btn-lg me-2">
+            <i class="bi bi-person-plus"></i> Registrarse
+        </a>
+        <a href="{% url 'tienda:productos' %}" class="btn btn-outline-light btn-lg">
+            <i class="bi bi-arrow-right"></i> Explorar
+        </a>
+        {% else %}
+        <a href="{% url 'tienda:productos' %}" class="btn btn-light btn-lg">
+            <i class="bi bi-bag-heart"></i> ¡Comprar Ahora!
+        </a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
