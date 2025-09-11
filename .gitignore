@@ -125,6 +125,3 @@ static_root/
 
 # Media files (uploaded content) - comentar si quieres versionar media files de ejemplo
 # media/
-
-#claude
-.claude/

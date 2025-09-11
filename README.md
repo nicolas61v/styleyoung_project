@@ -1,19 +1,19 @@
-# 👕 StyleYoung - Tienda Virtual de Ropa
+# StyleYoung - Tienda Virtual de Ropa
 
-## 📋 Descripción del Proyecto
+## Descripción del Proyecto
 
 **StyleYoung** es una plataforma de comercio electrónico especializada en la venta de ropa online, desarrollada con Django 5.0.6. El proyecto implementa un sistema completo de e-commerce con funcionalidades diferenciadas para usuarios finales y administradores, ofreciendo una experiencia de compra moderna y eficiente.
 
-### 🎯 Propósito
+### Propósito
 Crear una solución integral de comercio electrónico que permita a las tiendas de ropa gestionar su inventario, procesar pedidos y ofrecer una experiencia de compra optimizada a sus clientes.
 
 ---
 
-## 🚀 Alcance del Proyecto
+## Alcance del Proyecto
 
 ### Funcionalidades Implementadas
 
-#### 👤 **Usuario Final**
+#### **Usuario Final**
 - **Catálogo de Productos**: Navegación y búsqueda con filtros avanzados
 - **Sistema de Filtros**: Por categoría, precio, color, marca, talla y stock
 - **Búsqueda en Tiempo Real**: AJAX para resultados instantáneos
@@ -22,7 +22,7 @@ Crear una solución integral de comercio electrónico que permita a las tiendas 
 - **Sistema de Pedidos**: Seguimiento desde creación hasta entrega
 - **Autenticación**: Registro y login personalizado
 
-#### 👨‍💼 **Administrador**
+#### **Administrador**
 - **Dashboard Ejecutivo**: Métricas y estadísticas en tiempo real
 - **Gestión de Inventario**: CRUD completo de productos y categorías
 - **Control de Stock**: Alertas de productos con stock bajo
@@ -39,9 +39,9 @@ Crear una solución integral de comercio electrónico que permita a las tiendas 
 
 ---
 
-## 👥 Actores Involucrados
+## Actores Involucrados
 
-### 1. **Cliente Final** 🛍️
+### 1. **Cliente Final**
 - **Rol**: Usuario que realiza compras
 - **Responsabilidades**:
   - Navegar el catálogo de productos
@@ -50,7 +50,7 @@ Crear una solución integral de comercio electrónico que permita a las tiendas 
   - Realizar pedidos y seguimiento
   - Gestionar su perfil y datos personales
 
-### 2. **Administrador de Tienda** 👨‍💼
+### 2. **Administrador de Tienda**
 - **Rol**: Personal encargado de la gestión operativa
 - **Responsabilidades**:
   - Gestionar inventario (productos, categorías, stock)
@@ -59,7 +59,7 @@ Crear una solución integral de comercio electrónico que permita a las tiendas 
   - Generar reportes de rendimiento
   - Mantener actualizada la información de productos
 
-### 3. **Super Administrador** 🔧
+### 3. **Super Administrador**
 - **Rol**: Administrador técnico del sistema
 - **Responsabilidades**:
   - Configuración del sistema Django
@@ -69,48 +69,48 @@ Crear una solución integral de comercio electrónico que permita a las tiendas 
 
 ---
 
-## 💼 Beneficios de la Propuesta
+## Beneficios de la Propuesta
 
 ### **Para el Negocio**
-- ✅ **Automatización**: Reduce trabajo manual en gestión de inventario
-- ✅ **Escalabilidad**: Arquitectura preparada para crecimiento
-- ✅ **Métricas**: Datos en tiempo real para toma de decisiones
-- ✅ **Eficiencia**: Proceso de venta completamente digitalizado
-- ✅ **Alcance**: Venta 24/7 sin limitaciones geográficas
+- **Automatización**: Reduce trabajo manual en gestión de inventario
+- **Escalabilidad**: Arquitectura preparada para crecimiento
+- **Métricas**: Datos en tiempo real para toma de decisiones
+- **Eficiencia**: Proceso de venta completamente digitalizado
+- **Alcance**: Venta 24/7 sin limitaciones geográficas
 
 ### **Para los Clientes**
-- 🎯 **Experiencia Optimizada**: Búsqueda y filtros avanzados
-- 🎯 **Conveniencia**: Compras desde cualquier dispositivo
-- 🎯 **Transparencia**: Seguimiento completo de pedidos
-- 🎯 **Personalización**: Sistema de tallas y preferencias
-- 🎯 **Rapidez**: Búsqueda en tiempo real con AJAX
+- **Experiencia Optimizada**: Búsqueda y filtros avanzados
+- **Conveniencia**: Compras desde cualquier dispositivo
+- **Transparencia**: Seguimiento completo de pedidos
+- **Personalización**: Sistema de tallas y preferencias
+- **Rapidez**: Búsqueda en tiempo real con AJAX
 
 ### **Técnicos**
-- ⚡ **Rendimiento**: Arquitectura Django optimizada
-- ⚡ **Mantenibilidad**: Código modular y bien estructurado
-- ⚡ **Seguridad**: Sistema de autenticación robusto
-- ⚡ **Flexibilidad**: Fácil extensión y personalización
-- ⚡ **Confiabilidad**: Gestión de estados y validaciones completas
+- **Rendimiento**: Arquitectura Django optimizada
+- **Mantenibilidad**: Código modular y bien estructurado
+- **Seguridad**: Sistema de autenticación robusto
+- **Flexibilidad**: Fácil extensión y personalización
+- **Confiabilidad**: Gestión de estados y validaciones completas
 
 ---
 
-## 🏗️ Arquitectura del Sistema
+## Arquitectura del Sistema
 
 ### **Módulos Principales**
 
-#### 📦 **Tienda** (`tienda/`)
+#### **Tienda** (`tienda/`)
 - **Modelos**: Producto, Categoria, CarritoCompras, Pedido, Talla
 - **Funcionalidades**: Catálogo, filtros, carrito, procesamiento pedidos
 - **APIs**: Búsqueda AJAX, actualización de contadores
 
-#### 👥 **Usuarios** (`usuarios/`)
+#### **Usuarios** (`usuarios/`)
 - **Modelo**: Usuario personalizado (AbstractUser)
 - **Autenticación**: Email como username, campos adicionales
 - **Roles**: Cliente final y administrador diferenciados
 
 ### **Base de Datos**
 ```
-📊 Entidades Principales:
+Entidades Principales:
 ├── Usuario (personalizado)
 ├── Categoria
 ├── Producto 
@@ -123,7 +123,7 @@ Crear una solución integral de comercio electrónico que permita a las tiendas 
 
 ---
 
-## 🎯 Casos de Uso Principales
+## Casos de Uso Principales
 
 1. **Compra Completa**: Cliente busca → filtra → selecciona → carrito → pedido
 2. **Gestión de Inventario**: Admin añade productos → configura tallas → controla stock
@@ -132,7 +132,7 @@ Crear una solución integral de comercio electrónico que permita a las tiendas 
 
 ---
 
-## 🚀 Valor Agregado
+## Valor Agregado
 
 - **Escalable**: Preparado para múltiples tiendas y productos
 - **Moderno**: Búsqueda en tiempo real y experiencia fluida  
