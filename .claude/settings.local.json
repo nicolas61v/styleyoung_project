@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/dejavu/Downloads/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
