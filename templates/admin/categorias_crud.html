@@ -117,12 +117,11 @@
             </div>
             <div class="card-body">
                 {% if categorias %}
-                {% for categoria in categorias %}
+                {% for categoria in categorias|slice:":5" %}
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span>{{ categoria.nombre }}</span>
                     <span class="badge bg-secondary">{{ categoria.producto_set.count }}</span>
                 </div>
-                {% if forloop.counter >= 5 %}{% break %}{% endif %}
                 {% endfor %}
                 {% else %}
                 <p class="text-muted">No hay datos disponibles.</p>
@@ -223,11 +222,117 @@ function confirmDeleteCategoria(id, nombre) {
 }
 
 function saveCategoria() {
-    alert('Función guardar categoría - Por implementar');
+    const form = document.getElementById('addCategoriaForm');
+    const formData = new FormData(form);
+    
+    fetch('{% url "tienda:admin_categoria_crear" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Cerrar modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addCategoriaModal'));
+            modal.hide();
+            
+            // Mostrar mensaje de éxito
+            showAlert('success', data.message);
+            
+            // Limpiar formulario
+            form.reset();
+            
+            // Recargar página para mostrar la nueva categoría
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        } else {
+            // Mostrar errores
+            let errorMsg = 'Error al guardar la categoría:\n';
+            if (data.errors) {
+                for (let field in data.errors) {
+                    errorMsg += `${field}: ${data.errors[field].join(', ')}\n`;
+                }
+            } else {
+                errorMsg += data.message;
+            }
+            showAlert('error', errorMsg);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('error', 'Error de conexión. Intente nuevamente.');
+    });
 }
 
 function updateCategoria() {
-    alert('Función actualizar categoría - Por implementar');
+    const form = document.getElementById('editCategoriaForm');
+    const categoriaId = document.getElementById('editCategoriaId').value;
+    const formData = new FormData(form);
+    
+    fetch(`/admin-panel/categorias/editar/${categoriaId}/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Cerrar modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editCategoriaModal'));
+            modal.hide();
+            
+            // Mostrar mensaje de éxito
+            showAlert('success', data.message);
+            
+            // Recargar página para mostrar los cambios
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        } else {
+            // Mostrar errores
+            let errorMsg = 'Error al actualizar la categoría:\n';
+            if (data.errors) {
+                for (let field in data.errors) {
+                    errorMsg += `${field}: ${data.errors[field].join(', ')}\n`;
+                }
+            } else {
+                errorMsg += data.message;
+            }
+            showAlert('error', errorMsg);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('error', 'Error de conexión. Intente nuevamente.');
+    });
+}
+
+function showAlert(type, message) {
+    // Crear alerta temporal
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show position-fixed`;
+    alertDiv.style.top = '20px';
+    alertDiv.style.right = '20px';
+    alertDiv.style.zIndex = '9999';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(alertDiv);
+    
+    // Auto-remover después de 5 segundos
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.parentNode.removeChild(alertDiv);
+        }
+    }, 5000);
 }
 </script>
 {% endblock %}

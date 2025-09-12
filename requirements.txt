@@ -1,0 +1,33 @@
+# Dependencias esenciales para StyleYoung
+Django==4.2.15
+Pillow==10.3.0
+
+# Dependencias opcionales para funcionalidades adicionales
+# (descomenta si las necesitas)
+
+# Para procesamiento de imágenes avanzado
+# opencv-python==4.10.0.84
+
+# Para generación de códigos QR
+# qrcode==7.4.2
+
+# Para manejo de fechas
+# python-dateutil==2.9.0.post0
+
+# Para variables de entorno
+# python-dotenv==1.0.0
+
+# Para APIs REST (si se implementa)
+# djangorestframework==3.15.2
+
+# Para CORS (si se implementa frontend separado)
+# django-cors-headers==4.6.0
+
+# Para testing avanzado
+# pytest-django==4.8.0
+# factory-boy==3.3.1
+
+# Para deployment en producción
+# gunicorn==23.0.0
+# psycopg2-binary==2.9.10  # Para PostgreSQL
+# whitenoise==6.8.2        # Para archivos estáticos

@@ -24,6 +24,9 @@ urlpatterns = [
     path('admin-panel/productos/<int:producto_id>/imagen/agregar/', views.admin_imagen_agregar, name='admin_imagen_agregar'),
     path('admin-panel/imagen/eliminar/<int:imagen_id>/', views.admin_imagen_eliminar, name='admin_imagen_eliminar'),
     path('admin-panel/categorias/', views.admin_categorias, name='admin_categorias'),
+    path('admin-panel/categorias/crear/', views.admin_categoria_crear, name='admin_categoria_crear'),
+    path('admin-panel/categorias/editar/<int:categoria_id>/', views.admin_categoria_editar, name='admin_categoria_editar'),
+    path('admin-panel/categorias/eliminar/<int:categoria_id>/', views.admin_categoria_eliminar, name='admin_categoria_eliminar'),
     path('admin-panel/pedidos/', views.admin_pedidos, name='admin_pedidos'),
     path('admin-panel/reportes/', views.admin_reportes, name='admin_reportes'),
 ]

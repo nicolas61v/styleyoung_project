@@ -341,6 +341,84 @@ def admin_categorias(request):
 
 
 @user_passes_test(es_admin)
+def admin_categoria_crear(request):
+    """Crear nueva categoría"""
+    if request.method == 'POST':
+        form = CategoriaForm(request.POST)
+        if form.is_valid():
+            categoria = form.save()
+            messages.success(request, f'Categoría "{categoria.nombre}" creada exitosamente.')
+            return JsonResponse({
+                'success': True,
+                'message': f'Categoría "{categoria.nombre}" creada exitosamente.',
+                'categoria': {
+                    'id': categoria.id,
+                    'nombre': categoria.nombre,
+                    'descripcion': categoria.descripcion
+                }
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'errors': form.errors
+            })
+    return JsonResponse({'success': False, 'message': 'Método no permitido'})
+
+
+@user_passes_test(es_admin)
+def admin_categoria_editar(request, categoria_id):
+    """Editar categoría existente"""
+    categoria = get_object_or_404(Categoria, id=categoria_id)
+    
+    if request.method == 'POST':
+        form = CategoriaForm(request.POST, instance=categoria)
+        if form.is_valid():
+            categoria = form.save()
+            messages.success(request, f'Categoría "{categoria.nombre}" actualizada exitosamente.')
+            return JsonResponse({
+                'success': True,
+                'message': f'Categoría "{categoria.nombre}" actualizada exitosamente.',
+                'categoria': {
+                    'id': categoria.id,
+                    'nombre': categoria.nombre,
+                    'descripcion': categoria.descripcion
+                }
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'errors': form.errors
+            })
+    elif request.method == 'GET':
+        return JsonResponse({
+            'success': True,
+            'categoria': {
+                'id': categoria.id,
+                'nombre': categoria.nombre,
+                'descripcion': categoria.descripcion
+            }
+        })
+    return JsonResponse({'success': False, 'message': 'Método no permitido'})
+
+
+@user_passes_test(es_admin)
+def admin_categoria_eliminar(request, categoria_id):
+    """Eliminar categoría"""
+    categoria = get_object_or_404(Categoria, id=categoria_id)
+    
+    if request.method == 'POST':
+        nombre = categoria.nombre
+        categoria.delete()
+        messages.success(request, f'Categoría "{nombre}" eliminada exitosamente.')
+        return JsonResponse({
+            'success': True,
+            'message': f'Categoría "{nombre}" eliminada exitosamente.'
+        })
+    
+    return JsonResponse({'success': False, 'message': 'Método no permitido'})
+
+
+@user_passes_test(es_admin)
 def admin_pedidos(request):
     """Gestión de pedidos para administradores"""
     pedidos = Pedido.objects.all().order_by('-fecha_pedido')
