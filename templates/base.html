@@ -2,6 +2,11 @@
 {% load static %}<!DOCTYPE html>
 <html lang="es">
 <head>
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}StyleYoung - Tienda Virtual{% endblock %}</title>
@@ -233,5 +238,42 @@
     </script>
     
     {% block extra_js %}{% endblock %}
+
+
+    <!-- Google Translate oculto -->
+<div id="google_translate_element" style="display: none;"></div>
+
+<!-- Selector de idioma estilo Bootstrap -->
+
+<script type="text/javascript">
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement(
+      { pageLanguage: 'es', includedLanguages: 'es,en' },
+      'google_translate_element'
+    );
+  }
+
+  function translatePage(lang) {
+    var select = document.querySelector("select.goog-te-combo");
+    if (select) {
+      select.value = lang;
+      select.dispatchEvent(new Event("change"));
+    }
+  }
+</script>
+
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<div class="language-switcher btn-group">
+    <button class="btn btn-light rounded-circle shadow" onclick="translatePage('es')" title="Español">
+        <img src="https://flagcdn.com/es.svg" alt="Español" class="flag-icon">
+    </button>
+    <button class="btn btn-light rounded-circle shadow" onclick="translatePage('en')" title="English">
+        <img src="https://flagcdn.com/us.svg" alt="English" class="flag-icon">
+    </button>
+</div>
+
+
 </body>
+
 </html>
