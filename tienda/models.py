@@ -32,6 +32,12 @@ class Producto(models.Model):
     color = models.CharField(max_length=30)
     material = models.CharField(max_length=50)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+    imagen_principal = models.ImageField(
+        upload_to='productos/', 
+        blank=True, 
+        null=True,
+        help_text="Imagen principal del producto"
+    )
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     total_vendidos = models.IntegerField(default=0)
     
@@ -81,9 +87,46 @@ class Producto(models.Model):
     def __str__(self):
         return f"{self.nombre} - {self.marca}"
     
+    def obtener_imagen_principal(self):
+        """Obtener la imagen principal o la primera imagen disponible"""
+        if self.imagen_principal:
+            return self.imagen_principal.url
+        # Si no tiene imagen principal, buscar en imágenes adicionales
+        primera_imagen = self.imagenes.filter(es_principal=True).first()
+        if primera_imagen:
+            return primera_imagen.imagen.url
+        # Si no hay imagen principal marcada, tomar la primera
+        primera_imagen = self.imagenes.first()
+        if primera_imagen:
+            return primera_imagen.imagen.url
+        return None
+    
     class Meta:
         verbose_name = "Producto"
         verbose_name_plural = "Productos"
+
+
+class ImagenProducto(models.Model):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='imagenes')
+    imagen = models.ImageField(upload_to='productos/')
+    descripcion = models.CharField(max_length=100, blank=True, help_text="Descripción de la imagen")
+    es_principal = models.BooleanField(default=False, help_text="Marcar como imagen principal")
+    orden = models.IntegerField(default=0, help_text="Orden de visualización")
+    fecha_subida = models.DateTimeField(auto_now_add=True)
+    
+    def save(self, *args, **kwargs):
+        # Si se marca como principal, desmarcar otras imágenes del mismo producto
+        if self.es_principal:
+            ImagenProducto.objects.filter(producto=self.producto, es_principal=True).update(es_principal=False)
+        super().save(*args, **kwargs)
+    
+    def __str__(self):
+        return f"Imagen de {self.producto.nombre} - {self.descripcion or 'Sin descripción'}"
+    
+    class Meta:
+        verbose_name = "Imagen del Producto"
+        verbose_name_plural = "Imágenes del Producto"
+        ordering = ['orden', '-fecha_subida']
 
 
 class Talla(models.Model):

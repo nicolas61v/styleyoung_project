@@ -18,6 +18,11 @@ urlpatterns = [
     # URLs para administradores (/admin-panel/)
     path('admin-panel/', views.admin_dashboard, name='admin_dashboard'),
     path('admin-panel/productos/', views.admin_productos, name='admin_productos'),
+    path('admin-panel/productos/crear/', views.admin_producto_crear, name='admin_producto_crear'),
+    path('admin-panel/productos/editar/<int:producto_id>/', views.admin_producto_editar, name='admin_producto_editar'),
+    path('admin-panel/productos/eliminar/<int:producto_id>/', views.admin_producto_eliminar, name='admin_producto_eliminar'),
+    path('admin-panel/productos/<int:producto_id>/imagen/agregar/', views.admin_imagen_agregar, name='admin_imagen_agregar'),
+    path('admin-panel/imagen/eliminar/<int:imagen_id>/', views.admin_imagen_eliminar, name='admin_imagen_eliminar'),
     path('admin-panel/categorias/', views.admin_categorias, name='admin_categorias'),
     path('admin-panel/pedidos/', views.admin_pedidos, name='admin_pedidos'),
     path('admin-panel/reportes/', views.admin_reportes, name='admin_reportes'),

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Categoria, Producto, Talla, CarritoCompras, 
-    ItemCarrito, Pedido, ItemPedido
+    ItemCarrito, Pedido, ItemPedido, ImagenProducto
 )
 
 
@@ -16,12 +16,32 @@ class TallaInline(admin.TabularInline):
     extra = 5
 
 
+class ImagenProductoInline(admin.TabularInline):
+    model = ImagenProducto
+    extra = 3
+    fields = ('imagen', 'descripcion', 'es_principal', 'orden')
+
+
 @admin.register(Producto)
 class ProductoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'marca', 'precio', 'categoria', 'color', 'fecha_creacion')
+    list_display = ('nombre', 'marca', 'precio', 'categoria', 'color', 'tiene_imagen', 'fecha_creacion')
     list_filter = ('categoria', 'marca', 'color', 'material', 'fecha_creacion')
     search_fields = ('nombre', 'marca', 'descripcion')
-    inlines = [TallaInline]
+    inlines = [TallaInline, ImagenProductoInline]
+    fields = ('nombre', 'descripcion', 'precio', 'marca', 'color', 'material', 'categoria', 'imagen_principal')
+    
+    def tiene_imagen(self, obj):
+        return bool(obj.imagen_principal or obj.imagenes.exists())
+    tiene_imagen.boolean = True
+    tiene_imagen.short_description = 'Tiene imagen'
+
+
+@admin.register(ImagenProducto)
+class ImagenProductoAdmin(admin.ModelAdmin):
+    list_display = ('producto', 'descripcion', 'es_principal', 'orden', 'fecha_subida')
+    list_filter = ('es_principal', 'fecha_subida', 'producto__categoria')
+    search_fields = ('producto__nombre', 'descripcion')
+    ordering = ('producto', 'orden', '-fecha_subida')
 
 
 @admin.register(Talla)

@@ -1,0 +1,90 @@
+<!-- EJEMPLOS DE USO DE IMÁGENES EN TEMPLATES -->
+
+<!-- 1. LISTADO DE PRODUCTOS (para templates/usuario/productos.html) -->
+<div class="row">
+    {% for producto in productos %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <!-- Imagen pequeña en el listado -->
+                {% include 'snippets/producto_imagen.html' with producto=producto size='small' %}
+                
+                <div class="card-body">
+                    <h5 class="card-title">{{ producto.nombre }}</h5>
+                    <p class="text-muted">${{ producto.precio }}</p>
+                    <a href="{% url 'tienda:producto_detalle' producto.id %}" class="btn btn-primary">Ver detalle</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- 2. DETALLE DE PRODUCTO (para templates/usuario/producto_detalle.html) -->
+<div class="row">
+    <div class="col-md-6">
+        <!-- Imagen grande con galería -->
+        {% include 'snippets/producto_imagen.html' with producto=producto size='large' mostrar_galeria=True %}
+    </div>
+    <div class="col-md-6">
+        <h1>{{ producto.nombre }}</h1>
+        <p class="lead">${{ producto.precio }}</p>
+        <p>{{ producto.descripcion }}</p>
+        <!-- Resto de información del producto -->
+    </div>
+</div>
+
+<!-- 3. DASHBOARD ADMIN - Top productos con imagen -->
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Imagen</th>
+                <th>Producto</th>
+                <th>Ventas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for producto in top_productos %}
+                <tr>
+                    <td style="width: 80px;">
+                        {% include 'snippets/producto_imagen.html' with producto=producto size='small' %}
+                    </td>
+                    <td>{{ producto.nombre }}</td>
+                    <td>{{ producto.total_vendidos }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- 4. USANDO IMÁGENES DIRECTAMENTE (sin snippet) -->
+{% if producto.imagen_principal %}
+    <img src="{{ producto.imagen_principal.url }}" alt="{{ producto.nombre }}" class="img-fluid">
+{% elif producto.imagenes.first %}
+    <img src="{{ producto.imagenes.first.imagen.url }}" alt="{{ producto.nombre }}" class="img-fluid">
+{% else %}
+    <div class="sin-imagen">Sin imagen disponible</div>
+{% endif %}
+
+<!-- 5. GALERÍA DE TODAS LAS IMÁGENES DE UN PRODUCTO -->
+<div class="producto-galeria">
+    <!-- Imagen principal si existe -->
+    {% if producto.imagen_principal %}
+        <div class="imagen-principal mb-3">
+            <img src="{{ producto.imagen_principal.url }}" alt="{{ producto.nombre }}" class="img-fluid">
+            <small class="text-muted">Imagen principal</small>
+        </div>
+    {% endif %}
+    
+    <!-- Imágenes adicionales -->
+    {% for imagen in producto.imagenes.all %}
+        <div class="imagen-adicional mb-2">
+            <img src="{{ imagen.imagen.url }}" alt="{{ imagen.descripcion|default:producto.nombre }}" class="img-thumbnail" style="max-width: 200px;">
+            <div class="imagen-info">
+                <small class="text-muted">{{ imagen.descripcion|default:'Sin descripción' }}</small>
+                {% if imagen.es_principal %}
+                    <span class="badge badge-primary">Principal</span>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+</div>

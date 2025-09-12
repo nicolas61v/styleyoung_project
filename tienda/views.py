@@ -4,7 +4,8 @@ from django.contrib import messages
 from django.db.models import Q, Count
 from django.views.generic import ListView
 from django.http import JsonResponse
-from .models import Producto, Categoria, CarritoCompras, Pedido, Talla
+from .models import Producto, Categoria, CarritoCompras, Pedido, Talla, ImagenProducto
+from .forms import ProductoForm, CategoriaForm, ImagenProductoForm
 
 
 def es_admin(user):
@@ -229,6 +230,104 @@ def admin_productos(request):
     return render(request, 'admin/productos_crud.html', {
         'productos': productos
     })
+
+
+@user_passes_test(es_admin)
+def admin_producto_crear(request):
+    """Crear nuevo producto con imagen"""
+    if request.method == 'POST':
+        form = ProductoForm(request.POST, request.FILES)
+        if form.is_valid():
+            producto = form.save()
+            messages.success(request, f'Producto "{producto.nombre}" creado exitosamente.')
+            return redirect('tienda:admin_productos')
+        else:
+            messages.error(request, 'Error al crear el producto. Revisa los datos.')
+    else:
+        form = ProductoForm()
+    
+    return render(request, 'admin/producto_form.html', {
+        'form': form,
+        'titulo': 'Crear Nuevo Producto',
+        'accion': 'Crear'
+    })
+
+
+@user_passes_test(es_admin)
+def admin_producto_editar(request, producto_id):
+    """Editar producto existente"""
+    producto = get_object_or_404(Producto, id=producto_id)
+    
+    if request.method == 'POST':
+        form = ProductoForm(request.POST, request.FILES, instance=producto)
+        if form.is_valid():
+            producto = form.save()
+            messages.success(request, f'Producto "{producto.nombre}" actualizado exitosamente.')
+            return redirect('tienda:admin_productos')
+        else:
+            messages.error(request, 'Error al actualizar el producto. Revisa los datos.')
+    else:
+        form = ProductoForm(instance=producto)
+    
+    # Formulario para imágenes adicionales
+    imagen_form = ImagenProductoForm()
+    imagenes_adicionales = producto.imagenes.all().order_by('orden', '-fecha_subida')
+    
+    return render(request, 'admin/producto_form.html', {
+        'form': form,
+        'imagen_form': imagen_form,
+        'producto': producto,
+        'imagenes_adicionales': imagenes_adicionales,
+        'titulo': f'Editar: {producto.nombre}',
+        'accion': 'Actualizar'
+    })
+
+
+@user_passes_test(es_admin)
+def admin_producto_eliminar(request, producto_id):
+    """Eliminar producto"""
+    producto = get_object_or_404(Producto, id=producto_id)
+    
+    if request.method == 'POST':
+        nombre = producto.nombre
+        producto.delete()
+        messages.success(request, f'Producto "{nombre}" eliminado exitosamente.')
+        return redirect('tienda:admin_productos')
+    
+    return render(request, 'admin/producto_eliminar.html', {
+        'producto': producto
+    })
+
+
+@user_passes_test(es_admin)
+def admin_imagen_agregar(request, producto_id):
+    """Agregar imagen adicional a producto"""
+    producto = get_object_or_404(Producto, id=producto_id)
+    
+    if request.method == 'POST':
+        form = ImagenProductoForm(request.POST, request.FILES)
+        if form.is_valid():
+            imagen = form.save(commit=False)
+            imagen.producto = producto
+            imagen.save()
+            messages.success(request, 'Imagen agregada exitosamente.')
+        else:
+            messages.error(request, 'Error al agregar la imagen.')
+    
+    return redirect('tienda:admin_producto_editar', producto_id=producto_id)
+
+
+@user_passes_test(es_admin)
+def admin_imagen_eliminar(request, imagen_id):
+    """Eliminar imagen adicional"""
+    imagen = get_object_or_404(ImagenProducto, id=imagen_id)
+    producto_id = imagen.producto.id
+    
+    if request.method == 'POST':
+        imagen.delete()
+        messages.success(request, 'Imagen eliminada exitosamente.')
+    
+    return redirect('tienda:admin_producto_editar', producto_id=producto_id)
 
 
 @user_passes_test(es_admin)

@@ -9,7 +9,7 @@ class Usuario(AbstractUser):
     telefono = models.CharField(max_length=15, blank=True)
     
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['nombre']  # username ya no es requerido
+    REQUIRED_FIELDS = ['nombre', 'username']  # username necesario para createsuperuser
     
     def registrarse(self):
         """Método para registrar usuario"""

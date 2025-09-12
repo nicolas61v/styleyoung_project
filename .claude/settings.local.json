@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Read(//c/Users/dejavu/Downloads/**)"
+      "Read(//c/Users/dejavu/Downloads/**)",
+      "Bash(curl:*)",
+      "Bash(python manage.py runserver:*)"
     ],
     "deny": [],
     "ask": []

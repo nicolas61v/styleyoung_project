@@ -1,0 +1,85 @@
+<!-- Snippet para mostrar imagen de producto -->
+<!-- Uso: {% include 'snippets/producto_imagen.html' with producto=producto size='medium' %} -->
+
+{% load static %}
+
+<div class="producto-imagen {% if size %}imagen-{{ size }}{% endif %}">
+    {% if producto.obtener_imagen_principal %}
+        <img src="{{ producto.obtener_imagen_principal }}" 
+             alt="{{ producto.nombre }}" 
+             class="img-fluid producto-img">
+    {% else %}
+        <!-- Imagen por defecto si no tiene imagen -->
+        <div class="imagen-placeholder">
+            <i class="fas fa-image"></i>
+            <p>Sin imagen</p>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Galería de imágenes adicionales (opcional) -->
+{% if mostrar_galeria and producto.imagenes.all %}
+    <div class="galeria-imagenes mt-3">
+        {% for imagen in producto.imagenes.all %}
+            <div class="imagen-miniatura">
+                <img src="{{ imagen.imagen.url }}" 
+                     alt="{{ imagen.descripcion|default:producto.nombre }}" 
+                     class="img-thumbnail"
+                     onclick="cambiarImagenPrincipal('{{ imagen.imagen.url }}')">
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<style>
+/* Estilos básicos para las imágenes */
+.producto-imagen {
+    text-align: center;
+    overflow: hidden;
+}
+
+.producto-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.imagen-small .producto-img { max-height: 150px; }
+.imagen-medium .producto-img { max-height: 300px; }
+.imagen-large .producto-img { max-height: 500px; }
+
+.imagen-placeholder {
+    background-color: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    padding: 40px;
+    border-radius: 8px;
+    color: #6c757d;
+}
+
+.galeria-imagenes {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.imagen-miniatura img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.imagen-miniatura img:hover {
+    opacity: 0.7;
+}
+</style>
+
+<script>
+function cambiarImagenPrincipal(nuevaUrl) {
+    const imagenPrincipal = document.querySelector('.producto-img');
+    if (imagenPrincipal) {
+        imagenPrincipal.src = nuevaUrl;
+    }
+}
+</script>
