@@ -4,9 +4,12 @@
 
 {% block page_actions %}
 <div class="btn-group" role="group">
-    <button class="btn btn-outline-success btn-sm" onclick="exportarReporte()">
-        <i class="bi bi-download"></i> Exportar PDF
-    </button>
+    <a href="{% url 'tienda:descargar_reporte_pdf' %}" class="btn btn-danger btn-sm" target="_blank">
+        <i class="bi bi-file-pdf"></i> Descargar PDF
+    </a>
+    <a href="{% url 'tienda:descargar_reporte_excel' %}" class="btn btn-success btn-sm" target="_blank">
+        <i class="bi bi-file-excel"></i> Descargar Excel
+    </a>
     <button class="btn btn-outline-info btn-sm" onclick="actualizarDatos()">
         <i class="bi bi-arrow-clockwise"></i> Actualizar
     </button>
