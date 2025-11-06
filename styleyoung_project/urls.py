@@ -30,6 +30,14 @@ MAPA DE RUTAS COMPLETO:
 📡 APIs AJAX
 - /api/busqueda/ → Búsqueda en tiempo real
 - /api/actualizar-ventas/ → Actualizar contadores
+
+📡 API REST (v1)
+- /api/v1/ → Documentación de la API
+- /api/v1/productos/ → Lista de productos
+- /api/v1/productos/{id}/ → Detalle de producto
+- /api/v1/productos/en-stock/ → Productos con stock
+- /api/v1/productos/mas-vendidos/ → Top productos
+- /api/v1/categorias/ → Lista de categorías
 """
 from django.contrib import admin
 from django.urls import path, include
@@ -55,6 +63,9 @@ def api_status(request):
 urlpatterns = [
     # Django Admin (built-in)
     path('admin/', admin.site.urls),
+
+    # API REST v1 (pública para consumo externo)
+    path('api/v1/', include('tienda.api_urls')),
 
     # API Status endpoint
     path('api/status/', api_status, name='api_status'),
