@@ -45,6 +45,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls.i18n import i18n_patterns
 from django.http import JsonResponse
+from django.views.i18n import set_language
 
 def api_status(request):
     """Endpoint para verificar estado de la API"""
@@ -54,13 +55,23 @@ def api_status(request):
         'version': '1.0.0',
         'routes': {
             'user': '/',
-            'admin': '/admin-panel/', 
+            'admin': '/admin-panel/',
             'auth': '/auth/',
             'api': '/api/'
         }
     })
 
+def home_redirect(request):
+    """Redirecciona a la página de inicio con el idioma configurado"""
+    from django.shortcuts import redirect
+    from django.utils.translation import get_language
+    lang = get_language() or 'es'  # Default a español
+    return redirect(f'/{lang}/')
+
 urlpatterns = [
+    # Redirección de raíz a idioma por defecto
+    path('', home_redirect, name='home_redirect'),
+
     # Django Admin (built-in)
     path('admin/', admin.site.urls),
 

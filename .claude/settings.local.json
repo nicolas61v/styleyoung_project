@@ -3,7 +3,9 @@
     "allow": [
       "Read(//c/Users/dejavu/Downloads/**)",
       "Bash(curl:*)",
-      "Bash(python manage.py runserver:*)"
+      "Bash(python manage.py runserver:*)",
+      "Bash(git add:*)",
+      "Bash(git rebase:*)"
     ],
     "deny": [],
     "ask": []
