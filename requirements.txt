@@ -1,5 +1,5 @@
 # Core Django
-Django==4.2.15
+Django==5.2.8
 Pillow==10.3.0
 
 # HTTP requests (for external APIs)
@@ -8,7 +8,7 @@ requests==2.32.3
 # Production server
 gunicorn==23.0.0
 
-# Database (opcional para PostgreSQL)
+# Database (PostgreSQL)
 psycopg2-binary==2.9.10
 
 # Static files in production
@@ -18,16 +18,18 @@ whitenoise==6.8.2
 reportlab==4.4.4
 openpyxl==3.1.5
 
-# API and REST (opcional pero recomendado)
-# djangorestframework==3.15.2
-# django-cors-headers==4.6.0
+# API REST Framework
+djangorestframework==3.16.1
+django-cors-headers==4.9.0
+django-filter==25.2
 
-# Testing
-# pytest-django==4.8.0
-# factory-boy==3.3.1
+# AWS S3 Storage
+boto3==1.40.68
+django-storages==1.14.6
 
 # Utilities
-# python-dotenv==1.0.0
-# python-dateutil==2.9.0.post0
-# qrcode==7.4.2
-# opencv-python==4.10.0.84
+python-gettext==5.0
+
+# Testing (opcional)
+# pytest-django==4.8.0
+# factory-boy==3.3.1

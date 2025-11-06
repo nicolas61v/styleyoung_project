@@ -37,6 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Third party apps
+    'rest_framework',
+    'corsheaders',
+    'storages',
     # Apps del proyecto StyleYoung
     'tienda',
     'usuarios',
@@ -45,6 +49,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # CORS support for API
     'django.middleware.locale.LocaleMiddleware',  # i18n support
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -155,3 +160,65 @@ ADMIN_LOGIN_REDIRECT_URL = '/admin-panel/'
 
 # Modelo de usuario personalizado
 AUTH_USER_MODEL = 'usuarios.Usuario'
+
+# ========================================
+# DJANGO REST FRAMEWORK CONFIGURATION
+# ========================================
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 20,
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',  # API pública para consumo
+    ],
+}
+
+# ========================================
+# CORS CONFIGURATION (para que otros puedan consumir la API)
+# ========================================
+CORS_ALLOW_ALL_ORIGINS = True  # Permitir todos los orígenes (API pública)
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://localhost:3000",  # Por si alguien usa React/Vue
+]
+
+# ========================================
+# AWS S3 CONFIGURATION (para imágenes)
+# ========================================
+# IMPORTANTE: Estas son variables de ejemplo
+# Debes configurarlas con tus credenciales de AWS
+
+USE_S3 = False  # Cambiar a True cuando configures S3
+
+if USE_S3:
+    # Credenciales AWS (IMPORTANTE: usar variables de entorno en producción)
+    AWS_ACCESS_KEY_ID = 'TU_AWS_ACCESS_KEY'
+    AWS_SECRET_ACCESS_KEY = 'TU_AWS_SECRET_KEY'
+    AWS_STORAGE_BUCKET_NAME = 'styleyoung-productos'
+    AWS_S3_REGION_NAME = 'us-east-1'  # Cambia según tu región
+
+    # S3 Configuration
+    AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+    AWS_DEFAULT_ACL = 'public-read'
+    AWS_LOCATION = 'media'
+
+    # Media files (uploads) en S3
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
+else:
+    # Usar almacenamiento local (desarrollo)
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
