@@ -35,6 +35,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.conf.urls.i18n import i18n_patterns
 from django.http import JsonResponse
 
 def api_status(request):
@@ -54,16 +55,22 @@ def api_status(request):
 urlpatterns = [
     # Django Admin (built-in)
     path('admin/', admin.site.urls),
-    
+
     # API Status endpoint
     path('api/status/', api_status, name='api_status'),
-    
+
+    # Language switcher
+    path('i18n/', include('django.conf.urls.i18n')),
+]
+
+# URLs with internationalization support
+urlpatterns += i18n_patterns(
     # Autenticación (usuarios y admins)
     path('auth/', include('usuarios.urls')),
-    
+
     # Todas las rutas de la tienda (usuario final + admin-panel)
     path('', include('tienda.urls')),
-]
+)
 
 # Servir archivos media en desarrollo
 if settings.DEBUG:

@@ -4,8 +4,12 @@ from django.contrib import messages
 from django.db.models import Q, Count
 from django.views.generic import ListView
 from django.http import JsonResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Producto, Categoria, CarritoCompras, Pedido, Talla, ImagenProducto
 from .forms import ProductoForm, CategoriaForm, ImagenProductoForm
+from .services.reporte_interface import ReporteInterface
+from .services.reporte_pdf import ReportePDF
+from .services.reporte_excel import ReporteExcel
 
 
 def es_admin(user):
@@ -88,9 +92,22 @@ def productos_lista(request):
     
     # Ordenar por fecha de creación
     productos = productos.order_by('-fecha_creacion')
-    
+
+    # Paginación
+    paginator = Paginator(productos, 9)  # 9 productos por página (3x3 grid)
+    page = request.GET.get('page')
+
+    try:
+        productos_paginados = paginator.page(page)
+    except PageNotAnInteger:
+        # Si page no es un entero, mostrar la primera página
+        productos_paginados = paginator.page(1)
+    except EmptyPage:
+        # Si page está fuera de rango, mostrar la última página
+        productos_paginados = paginator.page(paginator.num_pages)
+
     return render(request, 'usuario/productos.html', {
-        'productos': productos,
+        'productos': productos_paginados,
         'categorias': categorias,
         'colores_disponibles': colores_disponibles,
         'marcas_disponibles': marcas_disponibles,
@@ -465,5 +482,143 @@ def actualizar_ventas(request):
             'productos_actualizados': productos_actualizados,
             'message': f'Se actualizaron {productos_actualizados} productos.'
         })
-    
+
     return JsonResponse({'success': False, 'message': 'Método no permitido'})
+
+
+# ======================
+# SERVICIO WEB JSON API
+# ======================
+
+def api_productos_stock(request):
+    """
+    Servicio web JSON que provee información de productos en stock
+
+    Este servicio es consumido por otros equipos y proporciona:
+    - Lista de productos disponibles en stock
+    - Información detallada de cada producto
+    - Enlaces directos a la visualización de cada producto
+
+    Endpoint: /api/productos-en-stock/
+    Método: GET
+    Formato de respuesta: JSON
+    """
+    # Obtener solo productos que tienen stock disponible
+    productos_con_stock = Producto.objects.filter(
+        tallas__stock__gt=0
+    ).distinct().select_related('categoria').prefetch_related('tallas')
+
+    # Construir lista de productos en formato JSON
+    productos_data = []
+    for producto in productos_con_stock:
+        # Obtener URL completa del producto
+        producto_url = request.build_absolute_uri(f'/producto/{producto.id}/')
+
+        # Obtener tallas disponibles con stock
+        tallas_disponibles = []
+        for talla in producto.tallas.filter(stock__gt=0):
+            tallas_disponibles.append({
+                'talla': talla.talla,
+                'stock': talla.stock
+            })
+
+        productos_data.append({
+            'id': producto.id,
+            'nombre': producto.nombre,
+            'descripcion': producto.descripcion,
+            'precio': float(producto.precio),
+            'marca': producto.marca,
+            'color': producto.color,
+            'material': producto.material,
+            'categoria': {
+                'id': producto.categoria.id,
+                'nombre': producto.categoria.nombre
+            },
+            'stock_total': producto.stock_total(),
+            'tallas_disponibles': tallas_disponibles,
+            'total_vendidos': producto.total_vendidos,
+            'url': producto_url,
+            'imagen_principal': producto.imagen_principal.url if producto.imagen_principal else None
+        })
+
+    # Respuesta JSON
+    return JsonResponse({
+        'success': True,
+        'total_productos': len(productos_data),
+        'productos': productos_data,
+        'message': 'Productos en stock obtenidos exitosamente',
+        'proyecto': 'StyleYoung - Tienda Virtual de Ropa',
+        'version': '1.0',
+        'endpoint': '/api/productos-en-stock/'
+    }, json_dumps_params={'ensure_ascii': False, 'indent': 2})
+
+
+# ======================
+# REPORTES CON INVERSIÓN DE DEPENDENCIAS
+# ======================
+
+def _generar_reporte_productos(generador_reporte: ReporteInterface, formato: str):
+    """
+    Función privada que utiliza inversión de dependencias para generar reportes
+
+    Esta función demuestra el principio de Inversión de Dependencias (DIP):
+    - Depende de la abstracción (ReporteInterface) y no de implementaciones concretas
+    - Permite agregar nuevos formatos sin modificar esta función
+    - El cliente decide qué implementación usar
+
+    Args:
+        generador_reporte: Instancia de una clase que implementa ReporteInterface
+        formato: Nombre del formato (para logging/mensajes)
+
+    Returns:
+        HttpResponse con el reporte generado
+    """
+    # Obtener productos con sus datos
+    productos = Producto.objects.select_related('categoria').prefetch_related('tallas').all()
+
+    # Preparar datos para el reporte
+    datos_reporte = []
+    for producto in productos:
+        datos_reporte.append({
+            'ID': producto.id,
+            'Nombre': producto.nombre,
+            'Categoría': producto.categoria.nombre,
+            'Marca': producto.marca,
+            'Precio': float(producto.precio),
+            'Color': producto.color,
+            'Material': producto.material,
+            'Stock': producto.stock_total(),
+            'Vendidos': producto.total_vendidos
+        })
+
+    # Columnas del reporte
+    columnas = ['ID', 'Nombre', 'Categoría', 'Marca', 'Precio', 'Color', 'Material', 'Stock', 'Vendidos']
+
+    # Generar reporte usando la implementación proporcionada
+    return generador_reporte.generar_reporte(
+        titulo="Reporte de Productos - StyleYoung",
+        datos=datos_reporte,
+        columnas=columnas
+    )
+
+
+@user_passes_test(es_admin)
+def descargar_reporte_pdf(request):
+    """
+    Vista para descargar reporte de productos en formato PDF
+
+    Utiliza la implementación ReportePDF gracias a la inversión de dependencias
+    """
+    generador = ReportePDF()
+    return _generar_reporte_productos(generador, 'PDF')
+
+
+@user_passes_test(es_admin)
+def descargar_reporte_excel(request):
+    """
+    Vista para descargar reporte de productos en formato Excel
+
+    Utiliza la implementación ReporteExcel gracias a la inversión de dependencias
+    """
+    generador = ReporteExcel()
+    return _generar_reporte_productos(generador, 'Excel')

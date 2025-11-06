@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # Aplicación Django
+  web:
+    build: .
+    container_name: styleyoung_web
+    command: gunicorn --bind 0.0.0.0:8000 --workers 3 --timeout 120 styleyoung_project.wsgi:application
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DEBUG=False
+      - ALLOWED_HOSTS=localhost,127.0.0.1
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - styleyoung_network
+
+  # Base de datos PostgreSQL (opcional, puede usar SQLite en desarrollo)
+  db:
+    image: postgres:15-alpine
+    container_name: styleyoung_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=styleyoung
+      - POSTGRES_USER=styleyoung_user
+      - POSTGRES_PASSWORD=styleyoung_password
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - styleyoung_network
+
+  # Nginx reverse proxy (opcional para producción)
+  nginx:
+    image: nginx:alpine
+    container_name: styleyoung_nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+    restart: unless-stopped
+    networks:
+      - styleyoung_network
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
+networks:
+  styleyoung_network:
+    driver: bridge

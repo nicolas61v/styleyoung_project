@@ -14,6 +14,9 @@ urlpatterns = [
     # APIs AJAX
     path('api/busqueda/', views.busqueda_ajax, name='busqueda_ajax'),
     path('api/actualizar-ventas/', views.actualizar_ventas, name='actualizar_ventas'),
+
+    # Servicio Web JSON para consumo externo
+    path('api/productos-en-stock/', views.api_productos_stock, name='api_productos_stock'),
     
     # URLs para administradores (/admin-panel/)
     path('admin-panel/', views.admin_dashboard, name='admin_dashboard'),
@@ -29,4 +32,8 @@ urlpatterns = [
     path('admin-panel/categorias/eliminar/<int:categoria_id>/', views.admin_categoria_eliminar, name='admin_categoria_eliminar'),
     path('admin-panel/pedidos/', views.admin_pedidos, name='admin_pedidos'),
     path('admin-panel/reportes/', views.admin_reportes, name='admin_reportes'),
+
+    # Descargas de reportes (inversión de dependencias)
+    path('admin-panel/reportes/descargar-pdf/', views.descargar_reporte_pdf, name='descargar_reporte_pdf'),
+    path('admin-panel/reportes/descargar-excel/', views.descargar_reporte_excel, name='descargar_reporte_excel'),
 ]

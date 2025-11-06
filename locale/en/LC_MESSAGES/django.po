@@ -1,0 +1,249 @@
+# English translations for StyleYoung project.
+# Copyright (C) 2024
+# This file is distributed under the same license as the StyleYoung package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: StyleYoung 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-01 00:00+0000\n"
+"PO-Revision-Date: 2024-01-01 00:00+0000\n"
+"Last-Translator: StyleYoung Team\n"
+"Language-Team: English\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# Navegación
+msgid "Inicio"
+msgstr "Home"
+
+msgid "Productos"
+msgstr "Products"
+
+msgid "Carrito"
+msgstr "Cart"
+
+msgid "Mis Pedidos"
+msgstr "My Orders"
+
+msgid "Cerrar Sesión"
+msgstr "Logout"
+
+msgid "Iniciar Sesión"
+msgstr "Login"
+
+msgid "Registrarse"
+msgstr "Register"
+
+msgid "Buscar productos..."
+msgstr "Search products..."
+
+# Footer
+msgid "Enlaces"
+msgstr "Links"
+
+msgid "Contacto"
+msgstr "Contact"
+
+msgid "Todos los derechos reservados"
+msgstr "All rights reserved"
+
+# Productos
+msgid "Ver Detalles"
+msgstr "View Details"
+
+msgid "Agregar al Carrito"
+msgstr "Add to Cart"
+
+msgid "Disponible"
+msgstr "Available"
+
+msgid "Agotado"
+msgstr "Out of Stock"
+
+msgid "Filtros"
+msgstr "Filters"
+
+msgid "Aplicar Filtros"
+msgstr "Apply Filters"
+
+msgid "Limpiar Filtros"
+msgstr "Clear Filters"
+
+msgid "Categoría"
+msgstr "Category"
+
+msgid "Precio"
+msgstr "Price"
+
+msgid "Color"
+msgstr "Color"
+
+msgid "Marca"
+msgstr "Brand"
+
+msgid "Talla"
+msgstr "Size"
+
+msgid "Stock"
+msgstr "Stock"
+
+# Categorías comunes
+msgid "Todas las categorías"
+msgstr "All categories"
+
+msgid "Todos los colores"
+msgstr "All colors"
+
+msgid "Todas las marcas"
+msgstr "All brands"
+
+msgid "Todas las tallas"
+msgstr "All sizes"
+
+# Carrito
+msgid "Subtotal"
+msgstr "Subtotal"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Procesar Pedido"
+msgstr "Process Order"
+
+msgid "Vaciar Carrito"
+msgstr "Empty Cart"
+
+msgid "Cantidad"
+msgstr "Quantity"
+
+msgid "Eliminar"
+msgstr "Delete"
+
+# Pedidos
+msgid "Pedido"
+msgstr "Order"
+
+msgid "Estado"
+msgstr "Status"
+
+msgid "Fecha"
+msgstr "Date"
+
+msgid "Dirección de Entrega"
+msgstr "Delivery Address"
+
+# Estados de pedido
+msgid "Pendiente"
+msgstr "Pending"
+
+msgid "Procesando"
+msgstr "Processing"
+
+msgid "Enviado"
+msgstr "Shipped"
+
+msgid "Entregado"
+msgstr "Delivered"
+
+msgid "Cancelado"
+msgstr "Cancelled"
+
+# Admin
+msgid "Panel Admin"
+msgstr "Admin Panel"
+
+msgid "Dashboard"
+msgstr "Dashboard"
+
+msgid "Gestión de Productos"
+msgstr "Product Management"
+
+msgid "Gestión de Categorías"
+msgstr "Category Management"
+
+msgid "Gestión de Pedidos"
+msgstr "Order Management"
+
+msgid "Reportes"
+msgstr "Reports"
+
+msgid "Agregar Producto"
+msgstr "Add Product"
+
+msgid "Editar Producto"
+msgstr "Edit Product"
+
+msgid "Eliminar Producto"
+msgstr "Delete Product"
+
+msgid "Guardar"
+msgstr "Save"
+
+msgid "Cancelar"
+msgstr "Cancel"
+
+# Formularios
+msgid "Nombre"
+msgstr "Name"
+
+msgid "Descripción"
+msgstr "Description"
+
+msgid "Material"
+msgstr "Material"
+
+msgid "Imagen"
+msgstr "Image"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Contraseña"
+msgstr "Password"
+
+msgid "Dirección"
+msgstr "Address"
+
+msgid "Teléfono"
+msgstr "Phone"
+
+# Mensajes
+msgid "Producto agregado al carrito"
+msgstr "Product added to cart"
+
+msgid "Pedido procesado exitosamente"
+msgstr "Order processed successfully"
+
+msgid "Error al procesar el pedido"
+msgstr "Error processing order"
+
+msgid "Producto actualizado correctamente"
+msgstr "Product updated successfully"
+
+msgid "Producto eliminado correctamente"
+msgstr "Product deleted successfully"
+
+msgid "Categoría creada correctamente"
+msgstr "Category created successfully"
+
+msgid "No hay productos"
+msgstr "No products"
+
+msgid "No se encontraron productos"
+msgstr "No products found"
+
+msgid "Buscar"
+msgstr "Search"
+
+msgid "Volver"
+msgstr "Back"
+
+msgid "Siguiente"
+msgstr "Next"
+
+msgid "Anterior"
+msgstr "Previous"
