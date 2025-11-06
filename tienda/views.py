@@ -130,15 +130,49 @@ def producto_detalle(request, producto_id):
 def carrito(request):
     """Carrito de compras del usuario"""
     carrito, created = CarritoCompras.objects.get_or_create(
-        usuario=request.user, 
+        usuario=request.user,
         activo=True
     )
     items = carrito.itemcarrito_set.all()
-    
+
     return render(request, 'usuario/carrito.html', {
         'carrito': carrito,
         'items': items
     })
+
+
+@login_required
+def agregar_al_carrito(request, producto_id):
+    """Agregar producto al carrito"""
+    if request.method == 'POST':
+        producto = get_object_or_404(Producto, id=producto_id)
+        talla_id = request.POST.get('talla_id')
+        cantidad = int(request.POST.get('cantidad', 1))
+
+        if not talla_id:
+            messages.error(request, 'Debes seleccionar una talla.')
+            return redirect('tienda:producto_detalle', producto_id=producto_id)
+
+        talla = get_object_or_404(Talla, id=talla_id, producto=producto)
+
+        # Verificar stock disponible
+        if talla.stock < cantidad:
+            messages.error(request, f'Solo hay {talla.stock} unidades disponibles de la talla {talla.talla}.')
+            return redirect('tienda:producto_detalle', producto_id=producto_id)
+
+        # Obtener o crear carrito
+        carrito, created = CarritoCompras.objects.get_or_create(
+            usuario=request.user,
+            activo=True
+        )
+
+        # Agregar producto al carrito
+        carrito.agregar_producto(producto, talla, cantidad)
+
+        messages.success(request, f'¡{producto.nombre} agregado al carrito!')
+        return redirect('tienda:carrito')
+
+    return redirect('tienda:producto_detalle', producto_id=producto_id)
 
 
 @login_required

@@ -9,6 +9,7 @@ urlpatterns = [
     path('productos/', views.productos_lista, name='productos'),
     path('producto/<int:producto_id>/', views.producto_detalle, name='producto_detalle'),
     path('carrito/', views.carrito, name='carrito'),
+    path('carrito/agregar/<int:producto_id>/', views.agregar_al_carrito, name='agregar_al_carrito'),
     path('mis-pedidos/', views.mis_pedidos, name='mis_pedidos'),
     
     # APIs AJAX

@@ -142,7 +142,7 @@
             <!-- Formulario de Compra -->
             {% if user.is_authenticated %}
                 {% if producto.stock_total > 0 %}
-                <form method="post" action="#" class="mb-3" id="form-agregar-carrito">
+                <form method="post" action="{% url 'tienda:agregar_al_carrito' producto.id %}" class="mb-3" id="form-agregar-carrito">
                     {% csrf_token %}
                     <input type="hidden" name="talla_id" id="talla-id-hidden" value="">
                     
