@@ -2,7 +2,7 @@
 
 ## Descripción del Proyecto
 
-**StyleYoung** es una plataforma de comercio electrónico especializada en la venta de ropa online, desarrollada con Django 5.0.6. El proyecto implementa un sistema completo de e-commerce con funcionalidades diferenciadas para usuarios finales y administradores, ofreciendo una experiencia de compra moderna y eficiente.
+**StyleYoung** es una plataforma de comercio electrónico especializada en la venta de ropa online, desarrollada con Django 5.0.6. El proyecto implementa un sistema completo de e-commerce con funcionalidades diferenciadas para usuarios finales y administradores, ofreciendo una experiencia de compra moderna y eficiente
 
 ### Propósito
 Crear una solución integral de comercio electrónico que permita a las tiendas de ropa gestionar su inventario, procesar pedidos y ofrecer una experiencia de compra optimizada a sus clientes.
