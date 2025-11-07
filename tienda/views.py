@@ -652,26 +652,61 @@ def admin_pedidos(request):
 def admin_reportes(request):
     """Reportes y estadísticas para administradores"""
     from django.db.models import Sum, Count
-    
+    from django.utils import timezone
+    from datetime import timedelta
+
     # Actualizar contadores si se solicita
     if request.GET.get('actualizar') == 'ventas':
         productos_actualizados = Producto.actualizar_todas_las_ventas()
         messages.success(request, f'Se actualizaron los contadores de {productos_actualizados} productos.')
-    
+
     # Top productos más vendidos (completo)
     top_productos = Producto.objects.filter(total_vendidos__gt=0).order_by('-total_vendidos')[:10]
-    
+
     # Estadísticas por categoría
     ventas_por_categoria = Categoria.objects.annotate(
         total_vendidos=Sum('producto__total_vendidos')
     ).order_by('-total_vendidos')
-    
+
     productos = Producto.objects.all()
-    
+    productos_count = productos.count()
+    total_vendidos = sum(p.total_vendidos for p in productos)
+
+    # Ventas del mes
+    primer_dia_mes = timezone.now().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    ventas_mes = Pedido.objects.filter(
+        fecha_pedido__gte=primer_dia_mes,
+        estado='entregado'
+    ).aggregate(Sum('total'))['total__sum'] or 0
+
+    pedidos_completados_mes = Pedido.objects.filter(
+        fecha_pedido__gte=primer_dia_mes,
+        estado='entregado'
+    ).count()
+
+    # Productos sin stock
+    productos_sin_stock = productos.filter(
+        tallas__stock=0
+    ).distinct().count()
+
+    # Valor total inventario
+    valor_inventario = sum(p.precio * p.stock_total() for p in productos)
+
+    # Ticket promedio
+    tickets = Pedido.objects.filter(total__gt=0)
+    ticket_promedio = sum(p.total for p in tickets) / tickets.count() if tickets.count() > 0 else 0
+
     return render(request, 'admin/reportes.html', {
         'productos': productos,
+        'productos_count': productos_count,
         'top_productos': top_productos,
-        'ventas_por_categoria': ventas_por_categoria
+        'ventas_por_categoria': ventas_por_categoria,
+        'ventas_mes': ventas_mes,
+        'pedidos_completados_mes': pedidos_completados_mes,
+        'total_vendidos': total_vendidos,
+        'productos_sin_stock': productos_sin_stock,
+        'valor_inventario': valor_inventario,
+        'ticket_promedio': ticket_promedio,
     })
 
 

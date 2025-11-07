@@ -24,65 +24,65 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div>
-                        <h4>$12,450</h4>
+                        <h4>${{ ventas_mes|floatformat:0 }}</h4>
                         <p class="mb-0">Ventas del Mes</p>
                     </div>
                     <div>
                         <i class="bi bi-cash-coin fa-2x"></i>
                     </div>
                 </div>
-                <small>+15% vs mes anterior</small>
+                <small>Pedidos entregados este mes</small>
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-3 mb-3">
         <div class="card bg-success text-white">
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div>
-                        <h4>86</h4>
+                        <h4>{{ pedidos_completados_mes }}</h4>
                         <p class="mb-0">Pedidos Completados</p>
                     </div>
                     <div>
                         <i class="bi bi-bag-check fa-2x"></i>
                     </div>
                 </div>
-                <small>+8% vs mes anterior</small>
+                <small>Este mes</small>
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-3 mb-3">
         <div class="card bg-info text-white">
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div>
-                        <h4>234</h4>
+                        <h4>{{ total_vendidos }}</h4>
                         <p class="mb-0">Productos Vendidos</p>
                     </div>
                     <div>
                         <i class="bi bi-box-seam fa-2x"></i>
                     </div>
                 </div>
-                <small>+22% vs mes anterior</small>
+                <small>Total histórico</small>
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-3 mb-3">
         <div class="card bg-warning text-white">
             <div class="card-body">
                 <div class="d-flex justify-content-between">
                     <div>
-                        <h4>42</h4>
-                        <p class="mb-0">Nuevos Clientes</p>
+                        <h4>{{ productos_count }}</h4>
+                        <p class="mb-0">Productos Activos</p>
                     </div>
                     <div>
-                        <i class="bi bi-people fa-2x"></i>
+                        <i class="bi bi-box2"></i>
                     </div>
                 </div>
-                <small>+5% vs mes anterior</small>
+                <small>En catálogo</small>
             </div>
         </div>
     </div>
@@ -93,57 +93,33 @@
     <div class="col-lg-6 mb-4">
         <div class="card">
             <div class="card-header">
-                <h5><i class="bi bi-trophy"></i> Top 3 Productos Más Vendidos</h5>
+                <h5><i class="bi bi-trophy"></i> Top Productos Más Vendidos</h5>
             </div>
             <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-2">
-                        <div class="bg-warning text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                            <i class="bi bi-trophy"></i>
+                {% if top_productos %}
+                    {% for producto in top_productos|slice:":3" %}
+                    <div class="row mb-3">
+                        <div class="col-2">
+                            <div class="bg-{% if forloop.counter == 1 %}warning{% elif forloop.counter == 2 %}secondary{% else %}info{% endif %} text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                <i class="bi bi-{% if forloop.counter == 1 %}trophy{% elif forloop.counter == 2 %}award{% else %}star{% endif %}"></i>
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <h6 class="mb-1">{{ producto.nombre }}</h6>
+                            <small class="text-muted">Categoría: {{ producto.categoria.nombre }}</small>
+                        </div>
+                        <div class="col-2 text-end">
+                            <strong>{{ producto.total_vendidos }}</strong><br>
+                            <small class="text-muted">vendidos</small>
                         </div>
                     </div>
-                    <div class="col-8">
-                        <h6 class="mb-1">Blusa Casual Azul</h6>
-                        <small class="text-muted">Categoría: Blusas</small>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <p class="text-muted">Sin productos vendidos aún</p>
                     </div>
-                    <div class="col-2 text-end">
-                        <strong>45</strong><br>
-                        <small class="text-muted">vendidos</small>
-                    </div>
-                </div>
-                
-                <div class="row mb-3">
-                    <div class="col-2">
-                        <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                            <i class="bi bi-award"></i>
-                        </div>
-                    </div>
-                    <div class="col-8">
-                        <h6 class="mb-1">Jean Skinny Negro</h6>
-                        <small class="text-muted">Categoría: Pantalones</small>
-                    </div>
-                    <div class="col-2 text-end">
-                        <strong>38</strong><br>
-                        <small class="text-muted">vendidos</small>
-                    </div>
-                </div>
-                
-                <div class="row mb-3">
-                    <div class="col-2">
-                        <div class="bg-info text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
-                            <i class="bi bi-star"></i>
-                        </div>
-                    </div>
-                    <div class="col-8">
-                        <h6 class="mb-1">Vestido Floral</h6>
-                        <small class="text-muted">Categoría: Vestidos</small>
-                    </div>
-                    <div class="col-2 text-end">
-                        <strong>32</strong><br>
-                        <small class="text-muted">vendidos</small>
-                    </div>
-                </div>
-                
+                {% endif %}
+
                 <div class="text-center mt-3">
                     <a href="{% url 'tienda:admin_productos' %}" class="btn btn-outline-primary btn-sm">
                         Ver Todos los Productos
@@ -160,45 +136,27 @@
                 <h5><i class="bi bi-pie-chart"></i> Ventas por Categoría</h5>
             </div>
             <div class="card-body">
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span>Blusas</span>
-                        <span>45%</span>
+                {% if ventas_por_categoria %}
+                    {% with total_ventas=ventas_por_categoria|dictsort:"total_vendidos"|last|index:1 %}
+                        {% for categoria in ventas_por_categoria %}
+                            {% if categoria.total_vendidos %}
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>{{ categoria.nombre }}</span>
+                                    <span>{{ categoria.total_vendidos }} vendidos</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: {% if ventas_por_categoria.0.total_vendidos > 0 %}{{ categoria.total_vendidos|multiply:100|divide:ventas_por_categoria.0.total_vendidos }}{% else %}0{% endif %}%"></div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endwith %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <p class="text-muted">Sin datos de ventas por categoría</p>
                     </div>
-                    <div class="progress">
-                        <div class="progress-bar bg-primary" style="width: 45%"></div>
-                    </div>
-                </div>
-                
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span>Pantalones</span>
-                        <span>30%</span>
-                    </div>
-                    <div class="progress">
-                        <div class="progress-bar bg-success" style="width: 30%"></div>
-                    </div>
-                </div>
-                
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span>Vestidos</span>
-                        <span>20%</span>
-                    </div>
-                    <div class="progress">
-                        <div class="progress-bar bg-info" style="width: 20%"></div>
-                    </div>
-                </div>
-                
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <span>Accesorios</span>
-                        <span>5%</span>
-                    </div>
-                    <div class="progress">
-                        <div class="progress-bar bg-warning" style="width: 5%"></div>
-                    </div>
-                </div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -224,36 +182,32 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>
-                                    <strong>Blusa Casual Azul</strong><br>
-                                    <small class="text-muted">SKU: BCA001</small>
-                                </td>
-                                <td><span class="badge bg-primary">Blusas</span></td>
-                                <td>15</td>
-                                <td>45</td>
-                                <td><span class="badge bg-success">Bueno</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <strong>Jean Skinny Negro</strong><br>
-                                    <small class="text-muted">SKU: JSN002</small>
-                                </td>
-                                <td><span class="badge bg-info">Pantalones</span></td>
-                                <td>3</td>
-                                <td>38</td>
-                                <td><span class="badge bg-warning">Stock Bajo</span></td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <strong>Vestido Floral</strong><br>
-                                    <small class="text-muted">SKU: VF003</small>
-                                </td>
-                                <td><span class="badge bg-success">Vestidos</span></td>
-                                <td>0</td>
-                                <td>32</td>
-                                <td><span class="badge bg-danger">Agotado</span></td>
-                            </tr>
+                            {% if productos %}
+                                {% for producto in productos|slice:":5" %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ producto.nombre }}</strong><br>
+                                        <small class="text-muted">ID: {{ producto.id }}</small>
+                                    </td>
+                                    <td><span class="badge bg-primary">{{ producto.categoria.nombre }}</span></td>
+                                    <td>{{ producto.stock_total }}</td>
+                                    <td>{{ producto.total_vendidos }}</td>
+                                    <td>
+                                        {% if producto.stock_total > 5 %}
+                                            <span class="badge bg-success">Bueno</span>
+                                        {% elif producto.stock_total > 0 %}
+                                            <span class="badge bg-warning">Stock Bajo</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Agotado</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted py-4">Sin productos</td>
+                                </tr>
+                            {% endif %}
                         </tbody>
                     </table>
                 </div>
@@ -270,31 +224,35 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <span>Productos activos:</span>
-                    <strong class="text-success">{{ productos.count }}</strong>
+                    <strong class="text-success">{{ productos_count }}</strong>
                 </div>
-                
+
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <span>Productos sin stock:</span>
-                    <strong class="text-danger">3</strong>
+                    <strong class="text-danger">{{ productos_sin_stock }}</strong>
                 </div>
-                
+
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <span>Valor total inventario:</span>
-                    <strong class="text-primary">$25,670</strong>
+                    <strong class="text-primary">${{ valor_inventario|floatformat:0 }}</strong>
                 </div>
-                
+
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <span>Ticket promedio:</span>
-                    <strong class="text-info">$145</strong>
+                    <strong class="text-info">${{ ticket_promedio|floatformat:2 }}</strong>
                 </div>
-                
+
                 <hr>
-                
+
                 <h6>Acciones Recomendadas:</h6>
                 <ul class="list-unstyled">
-                    <li><i class="bi bi-exclamation-triangle text-warning me-1"></i> <small>Reponer stock bajo</small></li>
-                    <li><i class="bi bi-plus-circle text-success me-1"></i> <small>Promocionar top productos</small></li>
-                    <li><i class="bi bi-graph-up text-info me-1"></i> <small>Analizar tendencias</small></li>
+                    {% if productos_sin_stock > 0 %}
+                    <li><i class="bi bi-exclamation-triangle text-warning me-1"></i> <small>{{ productos_sin_stock }} producto{{ productos_sin_stock|pluralize }} sin stock</small></li>
+                    {% endif %}
+                    {% if top_productos %}
+                    <li><i class="bi bi-plus-circle text-success me-1"></i> <small>Promocionar productos top</small></li>
+                    {% endif %}
+                    <li><i class="bi bi-graph-up text-info me-1"></i> <small>Analizar tendencias de venta</small></li>
                 </ul>
             </div>
         </div>
