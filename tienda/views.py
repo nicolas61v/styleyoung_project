@@ -309,7 +309,7 @@ def admin_dashboard(request):
     
     # Productos con stock bajo (menos de 5 unidades)
     productos_stock_bajo = Producto.objects.filter(
-        talla__stock__lt=5
+        tallas__stock__lt=5
     ).distinct().count()
     
     # Top 3 productos más vendidos (dinámico)
