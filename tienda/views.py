@@ -118,7 +118,7 @@ def productos_lista(request):
 def producto_detalle(request, producto_id):
     """Detalle de producto para usuarios finales"""
     producto = get_object_or_404(Producto, id=producto_id)
-    tallas_disponibles = producto.talla_set.filter(stock__gt=0)
+    tallas_disponibles = producto.tallas.filter(stock__gt=0)
     
     return render(request, 'usuario/producto_detalle.html', {
         'producto': producto,
@@ -296,6 +296,7 @@ def admin_producto_crear(request):
 
         form = ProductoForm(request.POST, request.FILES)
         # IMPORTANTE: Usar prefix='talla_set' para que coincida con el management_form en el template
+        # NOTA: El prefix sigue siendo 'talla_set' pero la relación en el modelo es 'tallas'
         talla_formset = TallaFormSet(request.POST, queryset=Talla.objects.none(), prefix='talla_set')
 
         logger.debug(f"Form válido: {form.is_valid()}")
@@ -372,7 +373,7 @@ def admin_producto_editar(request, producto_id):
     if request.method == 'POST':
         form = ProductoForm(request.POST, request.FILES, instance=producto)
         # IMPORTANTE: Usar prefix='talla_set' para que coincida con el management_form en el template
-        talla_formset = TallaFormSet(request.POST, queryset=producto.talla_set.all(), prefix='talla_set')
+        talla_formset = TallaFormSet(request.POST, queryset=producto.tallas.all(), prefix='talla_set')
 
         # Validación personalizada: verificar que haya al menos una talla válida
         tallas_validas = 0
@@ -415,7 +416,7 @@ def admin_producto_editar(request, producto_id):
             messages.error(request, error_msg)
     else:
         form = ProductoForm(instance=producto)
-        talla_formset = TallaFormSet(queryset=producto.talla_set.all(), prefix='talla_set')
+        talla_formset = TallaFormSet(queryset=producto.tallas.all(), prefix='talla_set')
 
     # Formulario para imágenes adicionales
     imagen_form = ImagenProductoForm()

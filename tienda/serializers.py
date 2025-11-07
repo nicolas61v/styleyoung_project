@@ -26,7 +26,7 @@ class ImagenProductoSerializer(serializers.ModelSerializer):
 class ProductoSerializer(serializers.ModelSerializer):
     """Serializador para productos con información anidada"""
     categoria = CategoriaSerializer(read_only=True)
-    tallas = TallaSerializer(source='talla_set', many=True, read_only=True)
+    tallas = TallaSerializer(many=True, read_only=True)
     imagenes = ImagenProductoSerializer(many=True, read_only=True)
     imagen_principal_url = serializers.SerializerMethodField()
     stock_total = serializers.SerializerMethodField()

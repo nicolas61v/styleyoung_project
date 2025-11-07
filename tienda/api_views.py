@@ -33,7 +33,7 @@ class ProductoViewSet(viewsets.ReadOnlyModelViewSet):
     - precio_min, precio_max
     """
 
-    queryset = Producto.objects.all().select_related('categoria').prefetch_related('talla_set', 'imagenproducto_set')
+    queryset = Producto.objects.all().select_related('categoria').prefetch_related('tallas', 'imagenes')
     serializer_class = ProductoSerializer
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['nombre', 'marca', 'descripcion', 'color', 'material']

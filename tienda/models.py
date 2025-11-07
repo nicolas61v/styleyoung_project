@@ -51,12 +51,12 @@ class Producto(models.Model):
             'color': self.color,
             'material': self.material,
             'categoria': self.categoria.nombre,
-            'tallas_disponibles': self.talla_set.all()
+            'tallas_disponibles': self.tallas.all()
         }
-    
+
     def stock_total(self):
         """Calcular stock total sumando todas las tallas"""
-        return sum(talla.stock for talla in self.talla_set.all())
+        return sum(talla.stock for talla in self.tallas.all())
     
     def actualizar_ventas(self):
         """Actualizar el contador de productos vendidos basado en pedidos entregados"""
@@ -137,10 +137,10 @@ class Talla(models.Model):
         ('L', 'Large'),
         ('XL', 'Extra Large'),
     ]
-    
+
     talla = models.CharField(max_length=10, choices=OPCIONES_TALLA)
     stock = models.IntegerField(default=0)
-    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='tallas')
     
     def verificar_stock(self, cantidad=1):
         """Verificar si hay stock disponible"""
