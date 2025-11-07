@@ -11,21 +11,27 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables from .env file
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-kllwd3pwt#q#s)uthh%h56b)t51^pxd2evw!mw3*g0vg&i@_0-'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-kllwd3pwt#q#s)uthh%h56b)t51^pxd2evw!mw3*g0vg&i@_0-')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+# Parse ALLOWED_HOSTS from environment variable
+ALLOWED_HOSTS_ENV = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1')
+ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS_ENV.split(',')]
 
 
 # Application definition
@@ -195,17 +201,17 @@ CORS_ALLOWED_ORIGINS = [
 # ========================================
 # AWS S3 CONFIGURATION (para imágenes)
 # ========================================
-# IMPORTANTE: Estas son variables de ejemplo
-# Debes configurarlas con tus credenciales de AWS
+# Lee las credenciales desde variables de entorno (.env)
 
-USE_S3 = False  # Cambiar a True cuando configures S3
+USE_S3 = os.getenv('USE_S3', 'False').lower() == 'true'
 
 if USE_S3:
-    # Credenciales AWS (IMPORTANTE: usar variables de entorno en producción)
-    AWS_ACCESS_KEY_ID = 'TU_AWS_ACCESS_KEY'
-    AWS_SECRET_ACCESS_KEY = 'TU_AWS_SECRET_KEY'
-    AWS_STORAGE_BUCKET_NAME = 'styleyoung-productos'
-    AWS_S3_REGION_NAME = 'us-east-1'  # Cambia según tu región
+    # Credenciales AWS desde variables de entorno
+    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+    AWS_SESSION_TOKEN = os.getenv('AWS_SESSION_TOKEN')
+    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME', 'styleyoung-productos')
+    AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'us-east-1')
 
     # S3 Configuration
     AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
