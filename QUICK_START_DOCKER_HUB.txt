@@ -1,0 +1,159 @@
+===============================================
+DOCKER HUB QUICK START - StyleYoung
+IP EC2: 52.73.136.81
+===============================================
+
+PASO 1: EN TU COMPUTADORA (Local)
+================================
+
+1. Abre PowerShell y navega al proyecto:
+   cd C:\Users\dejavu\Documents\NicolasINgenieroNASA\styleyoung_project
+
+2. Asegúrate de estar logueado en Docker Hub:
+   docker login
+   (ingresa usuario y contraseña)
+
+3. Construir imagen:
+   docker build -t tu-usuario-docker/styleyoung:latest .
+
+   EJEMPLO (reemplaza "tu-usuario-docker" con tu usuario real):
+   docker build -t nicolasjengienereonasa/styleyoung:latest .
+
+4. Subir a Docker Hub:
+   docker push tu-usuario-docker/styleyoung:latest
+
+   EJEMPLO:
+   docker push nicolasjengienereonasa/styleyoung:latest
+
+5. Verificar en https://hub.docker.com/ que aparece tu imagen
+
+
+PASO 2: EN AWS EC2 (IP: 52.73.136.81)
+=====================================
+
+1. Conectarse a EC2:
+   ssh -i "C:\ruta\tu-key.pem" ubuntu@52.73.136.81
+
+2. Instalar Docker:
+   curl -fsSL https://get.docker.com -o get-docker.sh
+   sudo sh get-docker.sh
+   sudo usermod -aG docker ubuntu
+   exit
+   (reconectar con SSH)
+
+3. Crear carpeta:
+   mkdir -p ~/styleyoung_project
+   cd ~/styleyoung_project
+
+4. Crear archivo .env:
+   nano .env
+
+   (Pega esto - MODIFICA LAS CREDENCIALES):
+   -----
+   DEBUG=False
+   SECRET_KEY=tu-secret-key-aqui
+   ALLOWED_HOSTS=52.73.136.81,yourdomain.tk
+   USE_S3=True
+   AWS_ACCESS_KEY_ID=TU_KEY
+   AWS_SECRET_ACCESS_KEY=TU_SECRET
+   AWS_SESSION_TOKEN=TU_TOKEN
+   AWS_STORAGE_BUCKET_NAME=styleyoung-productos
+   AWS_S3_REGION_NAME=us-east-1
+   POSTGRES_DB=styleyoung
+   POSTGRES_USER=styleyoung_user
+   POSTGRES_PASSWORD=tu-password
+   LANGUAGE_CODE=es
+   TIME_ZONE=America/Bogota
+   -----
+
+   (Guardar: Ctrl+X → Y → Enter)
+
+5. Descargar imagen de Docker Hub:
+   docker pull tu-usuario-docker/styleyoung:latest
+
+   EJEMPLO:
+   docker pull nicolasjengienereonasa/styleyoung:latest
+
+6. Ejecutar contenedor:
+   docker run -d \
+     --name styleyoung_app \
+     --env-file .env \
+     -p 80:8000 \
+     tu-usuario-docker/styleyoung:latest
+
+   EJEMPLO COMPLETO:
+   docker run -d \
+     --name styleyoung_app \
+     --env-file .env \
+     -p 80:8000 \
+     nicolasjengienereonasa/styleyoung:latest
+
+7. Verificar que corre:
+   docker ps
+   (Deberías ver tu contenedor listado)
+
+8. Ver logs:
+   docker logs -f styleyoung_app
+
+
+PASO 3: VERIFICAR EN NAVEGADOR
+==============================
+
+http://52.73.136.81
+http://52.73.136.81/admin
+http://52.73.136.81/api/v1/productos/
+
+
+PASO 4: SI HACES CAMBIOS (Actualizar)
+====================================
+
+En tu computadora:
+1. docker build -t tu-usuario/styleyoung:latest .
+2. docker push tu-usuario/styleyoung:latest
+
+En EC2:
+1. docker stop styleyoung_app
+2. docker rm styleyoung_app
+3. docker pull tu-usuario/styleyoung:latest
+4. docker run -d --name styleyoung_app --env-file .env -p 80:8000 tu-usuario/styleyoung:latest
+
+
+COMANDOS ÚTILES
+===============
+
+docker ps                               # Ver contenedores activos
+docker logs styleyoung_app              # Ver logs
+docker logs -f styleyoung_app           # Ver logs en tiempo real
+docker exec styleyoung_app bash         # Entrar en contenedor
+docker stop styleyoung_app              # Detener
+docker start styleyoung_app             # Iniciar
+docker restart styleyoung_app           # Reiniciar
+
+
+TROUBLESHOOTING
+===============
+
+¿Puerto 80 ocupado?
+  docker run -d --name styleyoung_app --env-file .env -p 8080:8000 tu-usuario/styleyoung:latest
+  Acceder en: http://52.73.136.81:8080
+
+¿Imagen no encontrada?
+  Asegúrate de haber hecho docker push
+
+¿Credenciales AWS inválidas?
+  Verificar .env tiene los datos correctos
+
+¿Aplicación no responde?
+  docker logs -f styleyoung_app
+
+
+IMPORTANTE
+==========
+
+- Reemplaza "tu-usuario" con tu usuario real de Docker Hub
+- Reemplaza credenciales AWS con las tuyas
+- IP EC2: 52.73.136.81
+- Puerto por defecto: 80 (HTTP)
+
+
+¡Éxito! 🚀
