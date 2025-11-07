@@ -40,9 +40,14 @@ docker run -d \
 echo "⏳ Esperando a que el contenedor inicie..."
 sleep 5
 
-# PASO 5: Hacer migraciones
-echo "🔄 Ejecutando migraciones de base de datos..."
-docker exec $CONTAINER_NAME python manage.py migrate
+# PASO 5: Hacer migraciones SOLO si es la primera vez (BD vacía)
+echo "🔄 Verificando estado de la base de datos..."
+if ! docker exec $CONTAINER_NAME python manage.py dbshell <<< "SELECT 1;" 2>/dev/null | grep -q "1"; then
+    echo "   → Primera vez: ejecutando migraciones..."
+    docker exec $CONTAINER_NAME python manage.py migrate
+else
+    echo "   → BD existente: saltando migraciones (datos preservados)"
+fi
 
 # PASO 6: Compilar traducciones
 echo "🌍 Compilando traducciones..."
