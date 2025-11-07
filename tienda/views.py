@@ -709,9 +709,20 @@ def admin_reportes(request):
     top_productos = Producto.objects.filter(total_vendidos__gt=0).order_by('-total_vendidos')[:10]
 
     # Estadísticas por categoría
-    ventas_por_categoria = Categoria.objects.annotate(
+    ventas_por_categoria_raw = Categoria.objects.annotate(
         total_vendidos=Sum('producto__total_vendidos')
     ).order_by('-total_vendidos')
+
+    # Calcular porcentajes
+    total_ventas_categorias = sum(c.total_vendidos or 0 for c in ventas_por_categoria_raw)
+    ventas_por_categoria = []
+    for cat in ventas_por_categoria_raw:
+        porcentaje = (cat.total_vendidos * 100 / total_ventas_categorias) if total_ventas_categorias > 0 else 0
+        ventas_por_categoria.append({
+            'nombre': cat.nombre,
+            'total_vendidos': cat.total_vendidos or 0,
+            'porcentaje': round(porcentaje, 1)
+        })
 
     productos = Producto.objects.all()
     productos_count = productos.count()
