@@ -101,9 +101,9 @@
                     </div>
                 </div>
                 
-                {% if producto.talla_set.all %}
+                {% if producto.tallas.all %}
                 <div class="tallas-selector mb-3">
-                    {% for talla in producto.talla_set.all %}
+                    {% for talla in producto.tallas.all %}
                     <button type="button" 
                             class="btn-talla {% if talla.stock > 0 %}disponible{% else %}agotada{% endif %} {% if talla.stock > 0 and talla.stock <= 3 %}pocas-unidades{% endif %}" 
                             data-talla-id="{{ talla.id }}" 
