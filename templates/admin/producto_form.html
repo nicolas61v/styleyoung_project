@@ -87,6 +87,66 @@
                             </div>
                         </div>
                         
+                        <!-- Sección de Tallas -->
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5 class="mb-3">
+                                    <i class="fas fa-ruler-vertical"></i> Tallas y Stock
+                                </h5>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-sm">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th style="width: 40%;">Talla</th>
+                                                <th style="width: 40%;">Cantidad/Stock</th>
+                                                <th style="width: 20%;" class="text-center">Eliminar</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for form in talla_formset %}
+                                                {% if form.errors %}
+                                                    <tr class="table-danger">
+                                                        <td colspan="3">
+                                                            <ul class="mb-0 small">
+                                                                {% for error in form.non_field_errors %}
+                                                                    <li>{{ error }}</li>
+                                                                {% endfor %}
+                                                                {% for field in form %}
+                                                                    {% if field.errors %}
+                                                                        {% for error in field.errors %}
+                                                                            <li>{{ field.label }}: {{ error }}</li>
+                                                                        {% endfor %}
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                {% endif %}
+                                                <tr>
+                                                    <td>
+                                                        {{ form.talla }}
+                                                    </td>
+                                                    <td>
+                                                        {{ form.stock }}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        {{ form.DELETE }}
+                                                    </td>
+                                                    <!-- Hidden fields -->
+                                                    {{ form.id }}
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <!-- Mensaje de información -->
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle"></i>
+                                        Marca la casilla "Eliminar" para remover una talla. Deja vacío el campo de Talla para ignorar una fila.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Mostrar errores del formulario -->
                         {% if form.errors %}
                             <div class="alert alert-danger">
@@ -184,4 +244,41 @@
         </div>
     </div>
 </div>
+
+<script>
+// Validación y limpieza del FormSet de tallas
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            // Remover filas vacías del formset
+            const tallas_tbody = document.querySelector('table tbody');
+            if (tallas_tbody) {
+                const rows = tallas_tbody.querySelectorAll('tr');
+                let hasValidTalla = false;
+
+                rows.forEach(row => {
+                    const selectTalla = row.querySelector('select[name*="talla"]');
+                    const inputStock = row.querySelector('input[name*="stock"]');
+                    const deleteCheckbox = row.querySelector('input[name*="DELETE"]');
+
+                    // Si ambos están vacíos y no está marcado para eliminar
+                    if (selectTalla && inputStock && deleteCheckbox) {
+                        if (!selectTalla.value && !inputStock.value && !deleteCheckbox.checked) {
+                            // Marcar para ignorar
+                            return;
+                        }
+                        if (selectTalla.value || inputStock.value) {
+                            hasValidTalla = true;
+                        }
+                    }
+                });
+            }
+
+            return true;
+        });
+    }
+});
+</script>
 {% endblock %}

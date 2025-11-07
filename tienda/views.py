@@ -6,7 +6,7 @@ from django.views.generic import ListView
 from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Producto, Categoria, CarritoCompras, Pedido, Talla, ImagenProducto
-from .forms import ProductoForm, CategoriaForm, ImagenProductoForm
+from .forms import ProductoForm, CategoriaForm, ImagenProductoForm, TallaFormSet
 from .services.reporte_interface import ReporteInterface
 from .services.reporte_pdf import ReportePDF
 from .services.reporte_excel import ReporteExcel
@@ -285,20 +285,33 @@ def admin_productos(request):
 
 @user_passes_test(es_admin)
 def admin_producto_crear(request):
-    """Crear nuevo producto con imagen"""
+    """Crear nuevo producto con imagen y tallas"""
     if request.method == 'POST':
         form = ProductoForm(request.POST, request.FILES)
-        if form.is_valid():
+        talla_formset = TallaFormSet(request.POST, queryset=Talla.objects.none())
+
+        if form.is_valid() and talla_formset.is_valid():
             producto = form.save()
+
+            # Procesar tallas
+            for talla_form in talla_formset:
+                if talla_form.cleaned_data and not talla_form.cleaned_data.get('DELETE'):
+                    talla = talla_form.save(commit=False)
+                    talla.producto = producto
+                    talla.save()
+
             messages.success(request, f'Producto "{producto.nombre}" creado exitosamente.')
             return redirect('tienda:admin_productos')
         else:
-            messages.error(request, 'Error al crear el producto. Revisa los datos.')
+            if form.errors or talla_formset.errors:
+                messages.error(request, 'Error al crear el producto. Revisa los datos.')
     else:
         form = ProductoForm()
-    
+        talla_formset = TallaFormSet(queryset=Talla.objects.none())
+
     return render(request, 'admin/producto_form.html', {
         'form': form,
+        'talla_formset': talla_formset,
         'titulo': 'Crear Nuevo Producto',
         'accion': 'Crear'
     })
@@ -306,26 +319,43 @@ def admin_producto_crear(request):
 
 @user_passes_test(es_admin)
 def admin_producto_editar(request, producto_id):
-    """Editar producto existente"""
+    """Editar producto existente con tallas"""
     producto = get_object_or_404(Producto, id=producto_id)
-    
+
     if request.method == 'POST':
         form = ProductoForm(request.POST, request.FILES, instance=producto)
-        if form.is_valid():
+        talla_formset = TallaFormSet(request.POST, queryset=producto.talla_set.all())
+
+        if form.is_valid() and talla_formset.is_valid():
             producto = form.save()
+
+            # Procesar tallas
+            for talla_form in talla_formset:
+                if talla_form.cleaned_data:
+                    if talla_form.cleaned_data.get('DELETE'):
+                        if talla_form.instance.pk:
+                            talla_form.instance.delete()
+                    else:
+                        talla = talla_form.save(commit=False)
+                        talla.producto = producto
+                        talla.save()
+
             messages.success(request, f'Producto "{producto.nombre}" actualizado exitosamente.')
             return redirect('tienda:admin_productos')
         else:
-            messages.error(request, 'Error al actualizar el producto. Revisa los datos.')
+            if form.errors or talla_formset.errors:
+                messages.error(request, 'Error al actualizar el producto. Revisa los datos.')
     else:
         form = ProductoForm(instance=producto)
-    
+        talla_formset = TallaFormSet(queryset=producto.talla_set.all())
+
     # Formulario para imágenes adicionales
     imagen_form = ImagenProductoForm()
     imagenes_adicionales = producto.imagenes.all().order_by('orden', '-fecha_subida')
-    
+
     return render(request, 'admin/producto_form.html', {
         'form': form,
+        'talla_formset': talla_formset,
         'imagen_form': imagen_form,
         'producto': producto,
         'imagenes_adicionales': imagenes_adicionales,

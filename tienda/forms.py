@@ -1,5 +1,6 @@
 from django import forms
-from .models import Producto, Categoria, ImagenProducto
+from django.forms import formset_factory, modelformset_factory
+from .models import Producto, Categoria, ImagenProducto, Talla
 
 
 class ProductoForm(forms.ModelForm):
@@ -95,9 +96,42 @@ class ImagenProductoForm(forms.ModelForm):
         }
 
 
+class TallaForm(forms.ModelForm):
+    """Formulario para crear/editar tallas de productos"""
+
+    class Meta:
+        model = Talla
+        fields = ['talla', 'stock']
+        widgets = {
+            'talla': forms.Select(attrs={
+                'class': 'form-control form-control-sm'
+            }),
+            'stock': forms.NumberInput(attrs={
+                'class': 'form-control form-control-sm',
+                'min': '0',
+                'value': '0'
+            })
+        }
+        labels = {
+            'talla': 'Talla',
+            'stock': 'Cantidad/Stock'
+        }
+
+
+# FormSet para manejar múltiples tallas en un producto
+TallaFormSet = modelformset_factory(
+    Talla,
+    form=TallaForm,
+    extra=5,  # Mostrar 5 filas vacías por defecto
+    can_delete=True,
+    min_num=0,
+    validate_min=False
+)
+
+
 class CategoriaForm(forms.ModelForm):
     """Formulario para crear/editar categorías"""
-    
+
     class Meta:
         model = Categoria
         fields = ['nombre', 'descripcion']
