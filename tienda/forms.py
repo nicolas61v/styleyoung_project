@@ -117,6 +117,32 @@ class TallaForm(forms.ModelForm):
             'stock': 'Cantidad/Stock'
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Hacer los campos opcionales para permitir filas vacías en el formset
+        self.fields['talla'].required = False
+        self.fields['stock'].required = False
+
+    def clean(self):
+        """Validación personalizada: si hay datos en una fila, ambos campos deben estar completos"""
+        cleaned_data = super().clean()
+        talla = cleaned_data.get('talla')
+        stock = cleaned_data.get('stock')
+
+        # Si está marcado para eliminar, no validar
+        if self.cleaned_data.get('DELETE'):
+            return cleaned_data
+
+        # Si hay talla pero no stock, o viceversa
+        if (talla and not stock is not None) or (stock is not None and not talla):
+            # Si ambos están vacíos, está bien (fila vacía)
+            if talla or stock is not None:
+                raise forms.ValidationError(
+                    "Si especificas una talla, debes incluir el stock también."
+                )
+
+        return cleaned_data
+
 
 # FormSet para manejar múltiples tallas en un producto
 TallaFormSet = modelformset_factory(

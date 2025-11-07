@@ -286,24 +286,44 @@ def admin_productos(request):
 @user_passes_test(es_admin)
 def admin_producto_crear(request):
     """Crear nuevo producto con imagen y tallas"""
+    import logging
+    logger = logging.getLogger(__name__)
+
     if request.method == 'POST':
+        logger.debug("=== INICIO: admin_producto_crear POST ===")
+        logger.debug(f"POST data: {request.POST.keys()}")
+        logger.debug(f"FILES data: {request.FILES.keys()}")
+
         form = ProductoForm(request.POST, request.FILES)
-        talla_formset = TallaFormSet(request.POST, queryset=Talla.objects.none())
+        # IMPORTANTE: Usar prefix='talla_set' para que coincida con el management_form en el template
+        talla_formset = TallaFormSet(request.POST, queryset=Talla.objects.none(), prefix='talla_set')
+
+        logger.debug(f"Form válido: {form.is_valid()}")
+        logger.debug(f"Form errors: {form.errors}")
+        logger.debug(f"Formset válido: {talla_formset.is_valid()}")
+        logger.debug(f"Formset errors: {talla_formset.errors}")
+        logger.debug(f"Formset non-form errors: {talla_formset.non_form_errors()}")
 
         # Validación personalizada: verificar que haya al menos una talla válida
         tallas_validas = 0
 
         # Contar tallas válidas incluso si el formset tiene errores
         if talla_formset.is_valid():
-            for talla_form in talla_formset:
+            for idx, talla_form in enumerate(talla_formset):
+                logger.debug(f"Talla {idx}: cleaned_data={talla_form.cleaned_data}")
                 if talla_form.cleaned_data and not talla_form.cleaned_data.get('DELETE'):
                     # Verificar que la talla esté completa
                     if talla_form.cleaned_data.get('talla'):
                         tallas_validas += 1
+                        logger.debug(f"Talla {idx} es válida: {talla_form.cleaned_data.get('talla')}")
+
+        logger.debug(f"Total tallas válidas: {tallas_validas}")
 
         # Solo procesar si el formulario de producto es válido Y hay tallas válidas
         if form.is_valid() and talla_formset.is_valid() and tallas_validas > 0:
+            logger.debug("✅ Creando producto...")
             producto = form.save()
+            logger.debug(f"✅ Producto creado: {producto.id}")
 
             # Procesar tallas
             for talla_form in talla_formset:
@@ -312,8 +332,10 @@ def admin_producto_crear(request):
                         talla = talla_form.save(commit=False)
                         talla.producto = producto
                         talla.save()
+                        logger.debug(f"✅ Talla guardada: {talla.talla}")
 
             messages.success(request, f'Producto "{producto.nombre}" creado exitosamente.')
+            logger.debug("=== FIN: admin_producto_crear (ÉXITO) ===")
             return redirect('tienda:admin_productos')
         else:
             # Mostrar errores específicos
@@ -325,10 +347,14 @@ def admin_producto_crear(request):
                 error_msg += 'Hay errores en las tallas. '
             if tallas_validas == 0:
                 error_msg += 'Debes agregar al menos una talla.'
+
+            logger.error(f"❌ Error: {error_msg}")
+            logger.debug("=== FIN: admin_producto_crear (ERROR) ===")
             messages.error(request, error_msg)
     else:
+        logger.debug("=== GET: admin_producto_crear ===")
         form = ProductoForm()
-        talla_formset = TallaFormSet(queryset=Talla.objects.none())
+        talla_formset = TallaFormSet(queryset=Talla.objects.none(), prefix='talla_set')
 
     return render(request, 'admin/producto_form.html', {
         'form': form,
@@ -345,7 +371,8 @@ def admin_producto_editar(request, producto_id):
 
     if request.method == 'POST':
         form = ProductoForm(request.POST, request.FILES, instance=producto)
-        talla_formset = TallaFormSet(request.POST, queryset=producto.talla_set.all())
+        # IMPORTANTE: Usar prefix='talla_set' para que coincida con el management_form en el template
+        talla_formset = TallaFormSet(request.POST, queryset=producto.talla_set.all(), prefix='talla_set')
 
         # Validación personalizada: verificar que haya al menos una talla válida
         tallas_validas = 0
@@ -388,7 +415,7 @@ def admin_producto_editar(request, producto_id):
             messages.error(request, error_msg)
     else:
         form = ProductoForm(instance=producto)
-        talla_formset = TallaFormSet(queryset=producto.talla_set.all())
+        talla_formset = TallaFormSet(queryset=producto.talla_set.all(), prefix='talla_set')
 
     # Formulario para imágenes adicionales
     imagen_form = ImagenProductoForm()
