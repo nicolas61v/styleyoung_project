@@ -32,8 +32,8 @@ RUN pip install --upgrade pip && \
 # Copiar código del proyecto
 COPY . /app/
 
-# Crear directorio para archivos estáticos y media
-RUN mkdir -p /app/staticfiles /app/media
+# Crear directorios para archivos estáticos, media y base de datos
+RUN mkdir -p /app/staticfiles /app/media /app/db
 
 # Recolectar archivos estáticos
 RUN python manage.py collectstatic --noinput || true
