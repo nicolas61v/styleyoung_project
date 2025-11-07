@@ -1,7 +1,12 @@
 #!/bin/bash
 
 # Script para desplegar StyleYoung en EC2 con volumen persistente
-# Uso: ./deploy-ec2.sh
+# IMPORTANTE: Este script NO ejecuta migraciones automáticamente
+# para preservar los datos existentes
+#
+# Uso:
+#   Primera vez: ./deploy-ec2.sh --init
+#   Actualizaciones: ./deploy-ec2.sh
 
 set -e
 
@@ -15,10 +20,9 @@ VOLUME_NAME="styleyoung_data"
 PORT="80:8000"
 ENV_FILE=".env"
 
-# PASO 1: Detener y eliminar contenedor anterior
+# PASO 1: Detener contenedor (SIN eliminar)
 echo "⏹️  Deteniendo contenedor anterior..."
 docker stop $CONTAINER_NAME 2>/dev/null || true
-docker rm $CONTAINER_NAME 2>/dev/null || true
 
 # PASO 2: Crear volumen si no existe
 echo "📦 Creando volumen persistente..."
@@ -28,7 +32,11 @@ docker volume create $VOLUME_NAME 2>/dev/null || true
 echo "⬇️  Descargando imagen de Docker Hub..."
 docker pull $IMAGE_NAME
 
-# PASO 4: Ejecutar contenedor CON VOLUMEN
+# PASO 4: Eliminar SOLO el contenedor (el volumen se mantiene)
+echo "🗑️  Eliminando contenedor antiguo..."
+docker rm $CONTAINER_NAME 2>/dev/null || true
+
+# PASO 5: Ejecutar contenedor CON VOLUMEN
 echo "🐳 Iniciando contenedor con volumen persistente..."
 docker run -d \
   --name $CONTAINER_NAME \
@@ -40,20 +48,21 @@ docker run -d \
 echo "⏳ Esperando a que el contenedor inicie..."
 sleep 5
 
-# PASO 5: Hacer migraciones SOLO si es la primera vez (BD vacía)
-echo "🔄 Verificando estado de la base de datos..."
-if ! docker exec $CONTAINER_NAME python manage.py dbshell <<< "SELECT 1;" 2>/dev/null | grep -q "1"; then
-    echo "   → Primera vez: ejecutando migraciones..."
+# PASO 6: Opción para inicializar (SOLO en la primera vez)
+if [[ "$1" == "--init" ]]; then
+    echo "🔄 INICIALIZANDO: Ejecutando migraciones..."
     docker exec $CONTAINER_NAME python manage.py migrate
+    echo "✅ Migraciones completadas"
 else
-    echo "   → BD existente: saltando migraciones (datos preservados)"
+    echo "⚠️  NOTA: Saltando migraciones (datos preservados)"
+    echo "   Si es la PRIMERA vez, ejecuta: ./deploy-ec2.sh --init"
 fi
 
-# PASO 6: Compilar traducciones
+# PASO 7: Compilar traducciones
 echo "🌍 Compilando traducciones..."
 docker exec $CONTAINER_NAME python manage.py compilemessages || true
 
-# PASO 7: Ver logs
+# PASO 8: Ver logs
 echo "📊 Últimos logs:"
 docker logs --tail=20 $CONTAINER_NAME
 
@@ -65,10 +74,11 @@ echo "  - http://52.73.136.81"
 echo "  - http://107.21.166.51"
 echo ""
 echo "Admin en:"
-echo "  - http://52.73.136.81/admin/"
+echo "  - http://52.73.136.81/admin-panel/"
 echo ""
 echo "Comandos útiles:"
 echo "  docker logs -f $CONTAINER_NAME     # Ver logs en tiempo real"
 echo "  docker restart $CONTAINER_NAME     # Reiniciar (datos persisten)"
 echo "  docker ps                          # Ver contenedores"
+echo "  ./deploy-ec2.sh --init             # Inicializar BD (PRIMERA VEZ SOLO)"
 echo ""
