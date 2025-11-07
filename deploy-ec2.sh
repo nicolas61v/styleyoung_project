@@ -11,7 +11,7 @@ echo "======================================"
 # Variables
 CONTAINER_NAME="styleyoung_app"
 IMAGE_NAME="nicolas61v/styleyoung:latest"
-VOLUME_DB="styleyoung_db"
+VOLUME_NAME="styleyoung_data"
 VOLUME_MEDIA="styleyoung_media"
 PORT="80:8000"
 ENV_FILE=".env"
@@ -22,7 +22,7 @@ docker stop $CONTAINER_NAME 2>/dev/null || true
 
 # PASO 2: Crear volúmenes si no existen
 echo "📦 Creando volúmenes persistentes..."
-docker volume create $VOLUME_DB 2>/dev/null || true
+docker volume create $VOLUME_NAME 2>/dev/null || true
 docker volume create $VOLUME_MEDIA 2>/dev/null || true
 
 # PASO 3: Descargar imagen más reciente
@@ -39,7 +39,7 @@ docker run -d \
   --name $CONTAINER_NAME \
   --env-file $ENV_FILE \
   -p $PORT \
-  -v $VOLUME_DB:/app/db \
+  -v $VOLUME_NAME:/app/db \
   -v $VOLUME_MEDIA:/app/media \
   $IMAGE_NAME
 
