@@ -642,10 +642,55 @@ def admin_categoria_eliminar(request, categoria_id):
 def admin_pedidos(request):
     """Gestión de pedidos para administradores"""
     pedidos = Pedido.objects.all().order_by('-fecha_pedido')
-    
+
     return render(request, 'admin/pedidos.html', {
         'pedidos': pedidos
     })
+
+
+@user_passes_test(es_admin)
+def cambiar_estado_pedido(request):
+    """API para cambiar estado de un pedido"""
+    if request.method == 'POST':
+        import json
+
+        try:
+            data = json.loads(request.body)
+            pedido_id = data.get('pedido_id')
+            nuevo_estado = data.get('nuevo_estado')
+
+            pedido = get_object_or_404(Pedido, id=pedido_id)
+
+            # Validar que el estado sea válido
+            estados_validos = [e[0] for e in pedido.ESTADOS_PEDIDO]
+            if nuevo_estado not in estados_validos:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Estado inválido'
+                }, status=400)
+
+            # Actualizar estado
+            pedido.actualizar_estado(nuevo_estado)
+
+            return JsonResponse({
+                'success': True,
+                'message': f'Pedido #{pedido.id} actualizado a {pedido.get_estado_display()}',
+                'nuevo_estado': nuevo_estado,
+                'nuevo_estado_display': pedido.get_estado_display()
+            })
+
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'success': False,
+                'message': 'JSON inválido'
+            }, status=400)
+        except Exception as e:
+            return JsonResponse({
+                'success': False,
+                'message': str(e)
+            }, status=500)
+
+    return JsonResponse({'success': False, 'message': 'Método no permitido'}, status=405)
 
 
 @user_passes_test(es_admin)

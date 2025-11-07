@@ -34,6 +34,7 @@ urlpatterns = [
     path('admin-panel/categorias/editar/<int:categoria_id>/', views.admin_categoria_editar, name='admin_categoria_editar'),
     path('admin-panel/categorias/eliminar/<int:categoria_id>/', views.admin_categoria_eliminar, name='admin_categoria_eliminar'),
     path('admin-panel/pedidos/', views.admin_pedidos, name='admin_pedidos'),
+    path('admin-panel/pedidos/cambiar-estado/', views.cambiar_estado_pedido, name='cambiar_estado_pedido'),
     path('admin-panel/reportes/', views.admin_reportes, name='admin_reportes'),
 
     # Descargas de reportes (inversión de dependencias)

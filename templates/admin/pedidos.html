@@ -176,6 +176,7 @@
             </div>
             <div class="modal-body">
                 <form id="cambiarEstadoForm">
+                    {% csrf_token %}
                     <input type="hidden" id="pedido_id_estado" name="pedido_id">
                     
                     <div class="mb-3">
@@ -263,7 +264,36 @@ function cambiarEstado(pedidoId, estadoActual) {
 }
 
 function confirmarCambioEstado() {
-    alert('Función cambiar estado - Por implementar');
+    const pedidoId = document.getElementById('pedido_id_estado').value;
+    const nuevoEstado = document.querySelector('[name="nuevo_estado"]').value;
+
+    fetch('{% url "tienda:cambiar_estado_pedido" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value || '',
+        },
+        body: JSON.stringify({
+            pedido_id: parseInt(pedidoId),
+            nuevo_estado: nuevoEstado
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('✅ ' + data.message);
+            location.reload();
+        } else {
+            alert('❌ Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('❌ Error al cambiar estado');
+    });
+
+    var modal = bootstrap.Modal.getInstance(document.getElementById('cambiarEstadoModal'));
+    modal.hide();
 }
 
 function imprimirPedido(pedidoId) {
