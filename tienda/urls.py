@@ -11,14 +11,14 @@ urlpatterns = [
     path('carrito/', views.carrito, name='carrito'),
     path('carrito/agregar/<int:producto_id>/', views.agregar_al_carrito, name='agregar_al_carrito'),
     path('mis-pedidos/', views.mis_pedidos, name='mis_pedidos'),
-    
+
     # APIs AJAX
     path('api/busqueda/', views.busqueda_ajax, name='busqueda_ajax'),
     path('api/actualizar-ventas/', views.actualizar_ventas, name='actualizar_ventas'),
 
     # Servicio Web JSON para consumo externo
     path('api/productos-en-stock/', views.api_productos_stock, name='api_productos_stock'),
-    
+
     # URLs para administradores (/admin-panel/)
     path('admin-panel/', views.admin_dashboard, name='admin_dashboard'),
     path('admin-panel/productos/', views.admin_productos, name='admin_productos'),

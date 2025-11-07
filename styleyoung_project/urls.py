@@ -85,6 +85,17 @@ urlpatterns = [
     path('i18n/', include('django.conf.urls.i18n')),
 ]
 
+# API REST (sin internacionalización)
+from rest_framework.routers import DefaultRouter
+from tienda.views import ProductoViewSet
+
+api_router = DefaultRouter()
+api_router.register(r'productos', ProductoViewSet, basename='producto-api')
+
+urlpatterns += [
+    path('api/v1/', include(api_router.urls)),
+]
+
 # URLs with internationalization support
 urlpatterns += i18n_patterns(
     # Autenticación (usuarios y admins)

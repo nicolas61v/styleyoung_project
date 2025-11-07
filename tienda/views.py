@@ -656,3 +656,32 @@ def descargar_reporte_excel(request):
     """
     generador = ReporteExcel()
     return _generar_reporte_productos(generador, 'Excel')
+
+
+# ======================
+# VISTAS API REST
+# ======================
+
+from rest_framework import viewsets
+from rest_framework.response import Response
+from .serializers import ProductoSerializer
+
+
+class ProductoViewSet(viewsets.ModelViewSet):
+    """
+    API ViewSet para operaciones CRUD de Productos
+
+    Endpoints disponibles:
+    - GET /api/v1/productos/ → Listar todos los productos
+    - POST /api/v1/productos/ → Crear nuevo producto
+    - GET /api/v1/productos/{id}/ → Obtener detalles de un producto
+    - PUT /api/v1/productos/{id}/ → Actualizar un producto
+    - DELETE /api/v1/productos/{id}/ → Eliminar un producto
+    """
+    queryset = Producto.objects.filter(activo=True) if hasattr(Producto, 'activo') else Producto.objects.all()
+    serializer_class = ProductoSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
