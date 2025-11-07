@@ -142,4 +142,13 @@ Entidades Principales:
 
 ---
 
+## Despliegue
+
+El proyecto StyleYoung fue desplegado en la nube de Amazon Web Services (AWS), demostrando su funcionamiento en un entorno real. Adicionalmente la aplicacion cuenta con una API que le permite mostrar sus productos y ofrece la integracion con otras aplicaciones.
+
+Almacenamiento de archivos estáticos y multimedia: Amazon S3
+
+Este despliegue permite una mayor escalabilidad, disponibilidad y gestión centralizada de recursos, garantizando el correcto funcionamiento del sistema en producción.
+
 *StyleYoung representa una solución integral para el comercio electrónico de moda, combinando funcionalidad robusta con experiencia de usuario optimizada.*
+
