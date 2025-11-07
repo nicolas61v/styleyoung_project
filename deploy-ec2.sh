@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # Script para desplegar StyleYoung en EC2 con volumen persistente
-# El script automáticamente detecta si necesita hacer migraciones
-# y preserva datos existentes
+# Auto-detecta si necesita migraciones
 
 set -e
 
@@ -44,15 +43,10 @@ docker run -d \
 echo "⏳ Esperando a que el contenedor inicie..."
 sleep 5
 
-# PASO 6: Detectar si necesita migraciones automáticamente
-echo "🔍 Detectando estado de la base de datos..."
-if docker exec $CONTAINER_NAME test -f /app/db/db.sqlite3; then
-    echo "   ✅ Base de datos existente - saltando migraciones"
-else
-    echo "   ⚠️  Base de datos vacía - ejecutando migraciones..."
-    docker exec $CONTAINER_NAME python manage.py migrate
-    echo "   ✅ Migraciones completadas"
-fi
+# PASO 6: Ejecutar migrations (siempre, Django es inteligente)
+# Django solo aplicará las migraciones que falten
+echo "🔄 Sincronizando base de datos..."
+docker exec $CONTAINER_NAME python manage.py migrate
 
 # PASO 7: Compilar traducciones
 echo "🌍 Compilando traducciones..."
