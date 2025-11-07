@@ -5,7 +5,7 @@ from django.db.models import Q, Count
 from django.views.generic import ListView
 from django.http import JsonResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Producto, Categoria, CarritoCompras, Pedido, Talla, ImagenProducto
+from .models import Producto, Categoria, CarritoCompras, Pedido, Talla, ImagenProducto, ItemPedido
 from .forms import ProductoForm, CategoriaForm, ImagenProductoForm, TallaFormSet
 from .services.reporte_interface import ReporteInterface
 from .services.reporte_pdf import ReportePDF
