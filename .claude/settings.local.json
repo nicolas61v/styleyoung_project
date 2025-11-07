@@ -9,7 +9,9 @@
       "Bash(python manage.py test:*)",
       "Bash(python test_clima.py:*)",
       "Bash(chcp:*)",
-      "Bash(pip freeze:*)"
+      "Bash(pip freeze:*)",
+      "Bash(timeout 10 python:*)",
+      "Bash(ssh:*)"
     ],
     "deny": [],
     "ask": []
