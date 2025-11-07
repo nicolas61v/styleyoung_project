@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+
+{% block title %}Checkout - StyleYoung{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-credit-card"></i> Procesar Compra
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <!-- Resumen del carrito -->
+                        <h5 class="mb-3">
+                            <i class="fas fa-shopping-bag"></i> Resumen de tu compra
+                        </h5>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-sm table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Talla</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in items %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ item.producto.nombre }}</strong><br>
+                                            <small class="text-muted">{{ item.producto.marca }}</small>
+                                        </td>
+                                        <td>{{ item.talla.talla }}</td>
+                                        <td>{{ item.cantidad }}</td>
+                                        <td>${{ item.precio_unitario }}</td>
+                                        <td><strong>${{ item.calcular_subtotal }}</strong></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <hr>
+
+                        <!-- Total -->
+                        <div class="row mb-4">
+                            <div class="col-md-6 offset-md-6">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h5>Detalle del pedido</h5>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>Subtotal:</span>
+                                            <strong>${{ carrito.total }}</strong>
+                                        </div>
+                                        <div class="d-flex justify-content-between mb-2">
+                                            <span>Envío:</span>
+                                            <strong>GRATIS</strong>
+                                        </div>
+                                        <hr>
+                                        <div class="d-flex justify-content-between">
+                                            <h5 class="mb-0">Total:</h5>
+                                            <h5 class="mb-0 text-primary"><strong>${{ carrito.total }}</strong></h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Formulario de pago -->
+                        <h5 class="mb-3">
+                            <i class="fas fa-map-marker-alt"></i> Dirección de entrega
+                        </h5>
+
+                        <div class="form-group mb-3">
+                            <label for="direccion" class="form-label">Ingresa tu dirección de entrega:</label>
+                            <textarea class="form-control" id="direccion" name="direccion" rows="3"
+                                      placeholder="Ej: Calle 123 #45-67, Apartamento 8B, Medellín" required></textarea>
+                            <small class="text-muted">* Campo requerido</small>
+                        </div>
+
+                        <hr>
+
+                        <h5 class="mb-3">
+                            <i class="fas fa-lock"></i> Información de pago
+                        </h5>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Pago simbólico:</strong> Esta es una tienda de demostración.
+                            Al hacer clic en "Confirmar compra", se procesará un pago simulado
+                            (sin cargo real en tu cuenta).
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label for="cardName" class="form-label">Nombre en la tarjeta:</label>
+                            <input type="text" class="form-control" id="cardName"
+                                   placeholder="Ej: JUAN PEREZ" required>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="cardNumber" class="form-label">Número de tarjeta:</label>
+                                    <input type="text" class="form-control" id="cardNumber"
+                                           placeholder="1234 5678 9012 3456" maxlength="19" required>
+                                    <small class="text-muted">Demo: usa cualquier número (4111111111111111)</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group mb-3">
+                                    <label for="expiry" class="form-label">Vencimiento:</label>
+                                    <input type="text" class="form-control" id="expiry"
+                                           placeholder="MM/YY" maxlength="5" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group mb-3">
+                                    <label for="cvv" class="form-label">CVV:</label>
+                                    <input type="text" class="form-control" id="cvv"
+                                           placeholder="123" maxlength="3" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="terms" required>
+                            <label class="form-check-label" for="terms">
+                                Acepto los términos y condiciones de compra
+                            </label>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'tienda:carrito' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Volver al carrito
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg flex-grow-1">
+                                <i class="fas fa-check-circle"></i> Confirmar Compra
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información adicional -->
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-truck"></i> Información de entrega
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Tiempo de entrega:</strong> 3-5 días hábiles</p>
+                    <p><strong>Costo de envío:</strong> GRATIS</p>
+                    <p><strong>Cobertura:</strong> Todo el país</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-question-circle"></i> ¿Necesitas ayuda?
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>Si tienes preguntas sobre tu compra, contacta con nosotros:</p>
+                    <p>
+                        <strong>Email:</strong> soporte@styleyoung.com<br>
+                        <strong>Teléfono:</strong> +57 (1) 1234-5678<br>
+                        <strong>Horario:</strong> Lun - Vie, 9am - 6pm
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Formatear número de tarjeta
+document.getElementById('cardNumber').addEventListener('keyup', function(e) {
+    let value = e.target.value.replace(/\s/g, '');
+    let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+    e.target.value = formattedValue;
+});
+
+// Formatear vencimiento
+document.getElementById('expiry').addEventListener('keyup', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    if (value.length >= 2) {
+        value = value.slice(0, 2) + '/' + value.slice(2, 4);
+    }
+    e.target.value = value;
+});
+
+// Solo números para CVV
+document.getElementById('cvv').addEventListener('keyup', function(e) {
+    e.target.value = e.target.value.replace(/\D/g, '');
+});
+</script>
+{% endblock %}

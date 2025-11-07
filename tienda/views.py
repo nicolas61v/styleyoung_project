@@ -179,9 +179,79 @@ def agregar_al_carrito(request, producto_id):
 def mis_pedidos(request):
     """Historial de pedidos del usuario"""
     pedidos = Pedido.objects.filter(usuario=request.user).order_by('-fecha_pedido')
-    
+
     return render(request, 'usuario/mis_pedidos.html', {
         'pedidos': pedidos
+    })
+
+
+@login_required
+def checkout(request):
+    """Vista de pago/checkout"""
+    # Obtener carrito del usuario
+    carrito, created = CarritoCompras.objects.get_or_create(
+        usuario=request.user,
+        activo=True
+    )
+
+    # Verificar que el carrito tenga items
+    items = carrito.itemcarrito_set.all()
+    if not items.exists():
+        messages.error(request, 'Tu carrito está vacío.')
+        return redirect('tienda:carrito')
+
+    if request.method == 'POST':
+        direccion = request.POST.get('direccion', '').strip()
+
+        if not direccion:
+            messages.error(request, 'Por favor ingresa una dirección de entrega.')
+            return redirect('tienda:checkout')
+
+        # Crear el pedido
+        pedido = Pedido.objects.create(
+            usuario=request.user,
+            total=carrito.total,
+            estado='procesando',  # Cambiar a procesando (como si hubiera "pagado")
+            direccion_entrega=direccion
+        )
+
+        # Procesar el pedido (crear items y reducir stock)
+        for item_carrito in items:
+            ItemPedido.objects.create(
+                pedido=pedido,
+                producto=item_carrito.producto,
+                talla=item_carrito.talla,
+                cantidad=item_carrito.cantidad,
+                precio_unitario=item_carrito.producto.precio
+            )
+            # Reducir stock
+            item_carrito.talla.reducir_stock(item_carrito.cantidad)
+            # Actualizar contador de vendidos
+            item_carrito.producto.total_vendidos += item_carrito.cantidad
+            item_carrito.producto.save()
+
+        # Marcar carrito como inactivo
+        carrito.activo = False
+        carrito.save()
+
+        # Redirigir a página de éxito
+        return redirect('tienda:pago_exitoso', pedido_id=pedido.id)
+
+    return render(request, 'usuario/checkout.html', {
+        'carrito': carrito,
+        'items': items
+    })
+
+
+@login_required
+def pago_exitoso(request, pedido_id):
+    """Página de confirmación de compra/gracias"""
+    pedido = get_object_or_404(Pedido, id=pedido_id, usuario=request.user)
+    items = pedido.itempedido_set.all()
+
+    return render(request, 'usuario/pago_exitoso.html', {
+        'pedido': pedido,
+        'items': items
     })
 
 

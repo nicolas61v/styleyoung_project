@@ -10,6 +10,8 @@ urlpatterns = [
     path('producto/<int:producto_id>/', views.producto_detalle, name='producto_detalle'),
     path('carrito/', views.carrito, name='carrito'),
     path('carrito/agregar/<int:producto_id>/', views.agregar_al_carrito, name='agregar_al_carrito'),
+    path('checkout/', views.checkout, name='checkout'),
+    path('pago-exitoso/<int:pedido_id>/', views.pago_exitoso, name='pago_exitoso'),
     path('mis-pedidos/', views.mis_pedidos, name='mis_pedidos'),
 
     # APIs AJAX
