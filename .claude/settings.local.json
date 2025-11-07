@@ -5,7 +5,8 @@
       "Bash(curl:*)",
       "Bash(python manage.py runserver:*)",
       "Bash(git add:*)",
-      "Bash(git rebase:*)"
+      "Bash(git rebase:*)",
+      "Bash(python manage.py test:*)"
     ],
     "deny": [],
     "ask": []

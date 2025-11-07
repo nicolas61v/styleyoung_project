@@ -63,3 +63,38 @@ class ProductoSerializer(serializers.ModelSerializer):
     def get_stock_total(self, obj):
         """Obtener el stock total del producto"""
         return obj.stock_total()
+
+
+class ProductoListSerializer(serializers.ModelSerializer):
+    """
+    Serializer simplificado para listados de productos
+    (menos datos para mejorar performance)
+    """
+    categoria_nombre = serializers.CharField(source='categoria.nombre', read_only=True)
+    stock_total = serializers.SerializerMethodField()
+    imagen_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Producto
+        fields = [
+            'id',
+            'nombre',
+            'precio',
+            'marca',
+            'color',
+            'categoria_nombre',
+            'imagen_url',
+            'stock_total',
+            'total_vendidos'
+        ]
+
+    def get_stock_total(self, obj):
+        return obj.stock_total()
+
+    def get_imagen_url(self, obj):
+        request = self.context.get('request')
+        if obj.imagen_principal and request:
+            return request.build_absolute_uri(obj.imagen_principal.url)
+        elif obj.imagen_principal:
+            return obj.imagen_principal.url
+        return None
