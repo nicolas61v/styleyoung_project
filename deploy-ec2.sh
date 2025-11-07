@@ -1,12 +1,8 @@
 #!/bin/bash
 
 # Script para desplegar StyleYoung en EC2 con volumen persistente
-# IMPORTANTE: Este script NO ejecuta migraciones automáticamente
-# para preservar los datos existentes
-#
-# Uso:
-#   Primera vez: ./deploy-ec2.sh --init
-#   Actualizaciones: ./deploy-ec2.sh
+# El script automáticamente detecta si necesita hacer migraciones
+# y preserva datos existentes
 
 set -e
 
@@ -48,11 +44,14 @@ docker run -d \
 echo "⏳ Esperando a que el contenedor inicie..."
 sleep 5
 
-# PASO 6: Opción para inicializar (SOLO en la primera vez)
-if [[ "$1" == "--init" ]]; then
-    echo "🔄 INICIALIZANDO: Ejecutando migraciones..."
+# PASO 6: Detectar si necesita migraciones automáticamente
+echo "🔍 Detectando estado de la base de datos..."
+if docker exec $CONTAINER_NAME test -f /app/db/db.sqlite3; then
+    echo "   ✅ Base de datos existente - saltando migraciones"
+else
+    echo "   ⚠️  Base de datos vacía - ejecutando migraciones..."
     docker exec $CONTAINER_NAME python manage.py migrate
-    echo "✅ Migraciones completadas"
+    echo "   ✅ Migraciones completadas"
 fi
 
 # PASO 7: Compilar traducciones
