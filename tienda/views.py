@@ -292,22 +292,26 @@ def admin_producto_crear(request):
 
         # Validación personalizada: verificar que haya al menos una talla válida
         tallas_validas = 0
+
+        # Contar tallas válidas incluso si el formset tiene errores
         if talla_formset.is_valid():
             for talla_form in talla_formset:
                 if talla_form.cleaned_data and not talla_form.cleaned_data.get('DELETE'):
-                    # Verificar que la talla y el stock estén completos
-                    if talla_form.cleaned_data.get('talla') and talla_form.cleaned_data.get('stock') is not None:
+                    # Verificar que la talla esté completa
+                    if talla_form.cleaned_data.get('talla'):
                         tallas_validas += 1
 
+        # Solo procesar si el formulario de producto es válido Y hay tallas válidas
         if form.is_valid() and talla_formset.is_valid() and tallas_validas > 0:
             producto = form.save()
 
             # Procesar tallas
             for talla_form in talla_formset:
                 if talla_form.cleaned_data and not talla_form.cleaned_data.get('DELETE'):
-                    talla = talla_form.save(commit=False)
-                    talla.producto = producto
-                    talla.save()
+                    if talla_form.cleaned_data.get('talla'):  # Solo si talla está completa
+                        talla = talla_form.save(commit=False)
+                        talla.producto = producto
+                        talla.save()
 
             messages.success(request, f'Producto "{producto.nombre}" creado exitosamente.')
             return redirect('tienda:admin_productos')
@@ -315,11 +319,12 @@ def admin_producto_crear(request):
             # Mostrar errores específicos
             error_msg = 'Error al crear el producto. '
             if not form.is_valid():
-                error_msg += 'Revisa los datos del producto. '
+                for field, errors in form.errors.items():
+                    error_msg += f'{field}: {", ".join(errors)} '
             if not talla_formset.is_valid():
                 error_msg += 'Hay errores en las tallas. '
             if tallas_validas == 0:
-                error_msg += 'Debes agregar al menos una talla con stock.'
+                error_msg += 'Debes agregar al menos una talla.'
             messages.error(request, error_msg)
     else:
         form = ProductoForm()
@@ -344,11 +349,13 @@ def admin_producto_editar(request, producto_id):
 
         # Validación personalizada: verificar que haya al menos una talla válida
         tallas_validas = 0
+
+        # Contar tallas válidas incluso si el formset tiene errores
         if talla_formset.is_valid():
             for talla_form in talla_formset:
                 if talla_form.cleaned_data and not talla_form.cleaned_data.get('DELETE'):
-                    # Verificar que la talla y el stock estén completos
-                    if talla_form.cleaned_data.get('talla') and talla_form.cleaned_data.get('stock') is not None:
+                    # Verificar que la talla esté completa
+                    if talla_form.cleaned_data.get('talla'):
                         tallas_validas += 1
 
         if form.is_valid() and talla_formset.is_valid() and tallas_validas > 0:
@@ -361,9 +368,10 @@ def admin_producto_editar(request, producto_id):
                         if talla_form.instance.pk:
                             talla_form.instance.delete()
                     else:
-                        talla = talla_form.save(commit=False)
-                        talla.producto = producto
-                        talla.save()
+                        if talla_form.cleaned_data.get('talla'):  # Solo si talla está completa
+                            talla = talla_form.save(commit=False)
+                            talla.producto = producto
+                            talla.save()
 
             messages.success(request, f'Producto "{producto.nombre}" actualizado exitosamente.')
             return redirect('tienda:admin_productos')
@@ -371,11 +379,12 @@ def admin_producto_editar(request, producto_id):
             # Mostrar errores específicos
             error_msg = 'Error al actualizar el producto. '
             if not form.is_valid():
-                error_msg += 'Revisa los datos del producto. '
+                for field, errors in form.errors.items():
+                    error_msg += f'{field}: {", ".join(errors)} '
             if not talla_formset.is_valid():
                 error_msg += 'Hay errores en las tallas. '
             if tallas_validas == 0:
-                error_msg += 'Debes tener al menos una talla con stock.'
+                error_msg += 'Debes tener al menos una talla.'
             messages.error(request, error_msg)
     else:
         form = ProductoForm(instance=producto)
