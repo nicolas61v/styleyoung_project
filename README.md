@@ -142,11 +142,47 @@ Entidades Principales:
 
 ---
 
+## API REST
+
+StyleYoung proporciona una API REST completa para la integración con otras aplicaciones.
+
+### **Endpoints Disponibles**
+
+| Endpoint | Método | Descripción |
+|----------|--------|-------------|
+| `/api/v1/productos/` | GET | Lista completa de productos con paginación |
+| `/api/v1/productos/{id}/` | GET | Detalle de un producto específico |
+| `/api/v1/productos/en-stock/` | GET | Solo productos con stock disponible |
+| `/api/v1/productos/mas-vendidos/` | GET | Top 10 productos más vendidos |
+| `/api/v1/productos/estadisticas/` | GET | Estadísticas agregadas de la tienda |
+| `/api/v1/categorias/` | GET | Lista de categorías disponibles |
+| `/api/productos-en-stock/` | GET | Servicio JSON personalizado de productos |
+| `/api/status/` | GET | Verificar estado de la API |
+
+### **Características**
+- Respuestas en formato JSON
+- Paginación: 20 productos por página
+- Filtrado por categoría, marca, color y precio
+- Búsqueda full-text
+- Documentación interactiva en `/api/v1/`
+
+### **Ejemplo de Consumo**
+```bash
+curl http://3.94.191.93/api/v1/productos/
+curl http://3.94.191.93/api/v1/productos/en-stock/
+curl http://3.94.191.93/api/status/
+```
+
+---
+
 ## Despliegue
 
-El proyecto StyleYoung fue desplegado en la nube de Amazon Web Services (AWS), demostrando su funcionamiento en un entorno real. Adicionalmente la aplicacion cuenta con una API que le permite mostrar sus productos y ofrece la integracion con otras aplicaciones.
+El proyecto StyleYoung fue desplegado en la nube de Amazon Web Services (AWS), demostrando su funcionamiento en un entorno real. La aplicación cuenta con una API REST que permite mostrar sus productos y ofrece integración con otras aplicaciones.
 
-Almacenamiento de archivos estáticos y multimedia: Amazon S3
+**Infraestructura:**
+- Hosting: AWS EC2
+- Almacenamiento de archivos estáticos y multimedia: Amazon S3
+- Containerización: Docker
 
 Este despliegue permite una mayor escalabilidad, disponibilidad y gestión centralizada de recursos, garantizando el correcto funcionamiento del sistema en producción.
 
