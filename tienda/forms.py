@@ -124,8 +124,8 @@ TallaFormSet = modelformset_factory(
     form=TallaForm,
     extra=5,  # Mostrar 5 filas vacías por defecto
     can_delete=True,
-    min_num=0,
-    validate_min=False
+    min_num=1,  # CAMBIO: Requerir mínimo 1 talla
+    validate_min=True  # CAMBIO: Validar que haya al menos 1 talla
 )
 
 

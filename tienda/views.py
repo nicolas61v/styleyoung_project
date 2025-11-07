@@ -290,7 +290,16 @@ def admin_producto_crear(request):
         form = ProductoForm(request.POST, request.FILES)
         talla_formset = TallaFormSet(request.POST, queryset=Talla.objects.none())
 
-        if form.is_valid() and talla_formset.is_valid():
+        # Validación personalizada: verificar que haya al menos una talla válida
+        tallas_validas = 0
+        if talla_formset.is_valid():
+            for talla_form in talla_formset:
+                if talla_form.cleaned_data and not talla_form.cleaned_data.get('DELETE'):
+                    # Verificar que la talla y el stock estén completos
+                    if talla_form.cleaned_data.get('talla') and talla_form.cleaned_data.get('stock') is not None:
+                        tallas_validas += 1
+
+        if form.is_valid() and talla_formset.is_valid() and tallas_validas > 0:
             producto = form.save()
 
             # Procesar tallas
@@ -303,8 +312,15 @@ def admin_producto_crear(request):
             messages.success(request, f'Producto "{producto.nombre}" creado exitosamente.')
             return redirect('tienda:admin_productos')
         else:
-            if form.errors or talla_formset.errors:
-                messages.error(request, 'Error al crear el producto. Revisa los datos.')
+            # Mostrar errores específicos
+            error_msg = 'Error al crear el producto. '
+            if not form.is_valid():
+                error_msg += 'Revisa los datos del producto. '
+            if not talla_formset.is_valid():
+                error_msg += 'Hay errores en las tallas. '
+            if tallas_validas == 0:
+                error_msg += 'Debes agregar al menos una talla con stock.'
+            messages.error(request, error_msg)
     else:
         form = ProductoForm()
         talla_formset = TallaFormSet(queryset=Talla.objects.none())
@@ -326,7 +342,16 @@ def admin_producto_editar(request, producto_id):
         form = ProductoForm(request.POST, request.FILES, instance=producto)
         talla_formset = TallaFormSet(request.POST, queryset=producto.talla_set.all())
 
-        if form.is_valid() and talla_formset.is_valid():
+        # Validación personalizada: verificar que haya al menos una talla válida
+        tallas_validas = 0
+        if talla_formset.is_valid():
+            for talla_form in talla_formset:
+                if talla_form.cleaned_data and not talla_form.cleaned_data.get('DELETE'):
+                    # Verificar que la talla y el stock estén completos
+                    if talla_form.cleaned_data.get('talla') and talla_form.cleaned_data.get('stock') is not None:
+                        tallas_validas += 1
+
+        if form.is_valid() and talla_formset.is_valid() and tallas_validas > 0:
             producto = form.save()
 
             # Procesar tallas
@@ -343,8 +368,15 @@ def admin_producto_editar(request, producto_id):
             messages.success(request, f'Producto "{producto.nombre}" actualizado exitosamente.')
             return redirect('tienda:admin_productos')
         else:
-            if form.errors or talla_formset.errors:
-                messages.error(request, 'Error al actualizar el producto. Revisa los datos.')
+            # Mostrar errores específicos
+            error_msg = 'Error al actualizar el producto. '
+            if not form.is_valid():
+                error_msg += 'Revisa los datos del producto. '
+            if not talla_formset.is_valid():
+                error_msg += 'Hay errores en las tallas. '
+            if tallas_validas == 0:
+                error_msg += 'Debes tener al menos una talla con stock.'
+            messages.error(request, error_msg)
     else:
         form = ProductoForm(instance=producto)
         talla_formset = TallaFormSet(queryset=producto.talla_set.all())
