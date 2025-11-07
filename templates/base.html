@@ -20,8 +20,9 @@
     <!-- Navbar para usuarios finales -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="{% url 'tienda:home' %}">
-                <i class="bi bi-shop"></i> StyleYoung
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="{% url 'tienda:home' %}">
+                <img src="{% static 'images/logo.jpg' %}" alt="StyleYoung Logo" style="height: 40px; margin-right: 10px; border-radius: 5px;">
+                StyleYoung
             </a>
 
             <!-- Widget del Clima (API Externa) -->

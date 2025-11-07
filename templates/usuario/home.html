@@ -3,21 +3,59 @@
 {% block title %}StyleYoung - Inicio{% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="bg-primary text-white py-5">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h1 class="display-4 fw-bold">¡Bienvenida a StyleYoung!</h1>
-                <p class="lead">Encuentra la moda perfecta para ti. Ropa femenina moderna y trendy para jóvenes de 11 a 40 años.</p>
-                <a href="{% url 'tienda:productos' %}" class="btn btn-light btn-lg">
-                    <i class="bi bi-bag-heart"></i> Ver Productos
-                </a>
+<!-- Hero Banner Section with Carousel -->
+<section class="hero-banner mb-5">
+    <div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+        <div class="carousel-inner">
+            <!-- Slide 1: Fashion Photo -->
+            <div class="carousel-item active">
+                <div style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=1200&h=400&fit=crop') center/cover; height: 400px; display: flex; align-items: center; justify-content: center;">
+                    <div class="text-center text-white">
+                        <h1 class="display-3 fw-bold mb-3">¡Bienvenida a StyleYoung!</h1>
+                        <p class="lead fs-5 mb-4">Moda femenina moderna y trendy para jóvenes</p>
+                        <a href="{% url 'tienda:productos' %}" class="btn btn-light btn-lg">
+                            <i class="bi bi-bag-heart"></i> Ver Productos Ahora
+                        </a>
+                    </div>
+                </div>
             </div>
-            <div class="col-lg-6 text-center">
-                <i class="bi bi-person-dress display-1"></i>
+
+            <!-- Slide 2: Clothing Photo -->
+            <div class="carousel-item">
+                <div style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1595777707802-21b287814862?w=1200&h=400&fit=crop') center/cover; height: 400px; display: flex; align-items: center; justify-content: center;">
+                    <div class="text-center text-white">
+                        <h2 class="display-4 fw-bold mb-3">Colecciones Exclusivas</h2>
+                        <p class="lead fs-5 mb-4">Descubre nuestras colecciones más recientes</p>
+                        <a href="{% url 'tienda:productos' %}" class="btn btn-light btn-lg">
+                            <i class="bi bi-star"></i> Explorar Colecciones
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3: Style Photo -->
+            <div class="carousel-item">
+                <div style="background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=1200&h=400&fit=crop') center/cover; height: 400px; display: flex; align-items: center; justify-content: center;">
+                    <div class="text-center text-white">
+                        <h2 class="display-4 fw-bold mb-3">Tu Estilo, Tu Moda</h2>
+                        <p class="lead fs-5 mb-4">Expresa tu personalidad con nuestras prendas</p>
+                        <a href="{% url 'tienda:productos' %}" class="btn btn-light btn-lg">
+                            <i class="bi bi-heart"></i> Descubrir Ahora
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <!-- Carousel Controls -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#bannerCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Siguiente</span>
+        </button>
     </div>
 </section>
 
