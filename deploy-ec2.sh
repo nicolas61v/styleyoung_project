@@ -20,7 +20,7 @@ VOLUME_NAME="styleyoung_data"
 PORT="80:8000"
 ENV_FILE=".env"
 
-# PASO 1: Detener contenedor (SIN eliminar)
+# PASO 1: Detener contenedor
 echo "⏹️  Deteniendo contenedor anterior..."
 docker stop $CONTAINER_NAME 2>/dev/null || true
 
@@ -32,7 +32,7 @@ docker volume create $VOLUME_NAME 2>/dev/null || true
 echo "⬇️  Descargando imagen de Docker Hub..."
 docker pull $IMAGE_NAME
 
-# PASO 4: Eliminar SOLO el contenedor (el volumen se mantiene)
+# PASO 4: Eliminar contenedor antiguo
 echo "🗑️  Eliminando contenedor antiguo..."
 docker rm $CONTAINER_NAME 2>/dev/null || true
 
@@ -53,9 +53,6 @@ if [[ "$1" == "--init" ]]; then
     echo "🔄 INICIALIZANDO: Ejecutando migraciones..."
     docker exec $CONTAINER_NAME python manage.py migrate
     echo "✅ Migraciones completadas"
-else
-    echo "⚠️  NOTA: Saltando migraciones (datos preservados)"
-    echo "   Si es la PRIMERA vez, ejecuta: ./deploy-ec2.sh --init"
 fi
 
 # PASO 7: Compilar traducciones
@@ -64,21 +61,13 @@ docker exec $CONTAINER_NAME python manage.py compilemessages || true
 
 # PASO 8: Ver logs
 echo "📊 Últimos logs:"
-docker logs --tail=20 $CONTAINER_NAME
+docker logs --tail=10 $CONTAINER_NAME
 
 echo ""
 echo "✅ ¡Despliegue completado!"
 echo "======================================"
-echo "Aplicación disponible en:"
-echo "  - http://52.73.136.81"
-echo "  - http://107.21.166.51"
-echo ""
-echo "Admin en:"
-echo "  - http://52.73.136.81/admin-panel/"
-echo ""
 echo "Comandos útiles:"
 echo "  docker logs -f $CONTAINER_NAME     # Ver logs en tiempo real"
 echo "  docker restart $CONTAINER_NAME     # Reiniciar (datos persisten)"
 echo "  docker ps                          # Ver contenedores"
-echo "  ./deploy-ec2.sh --init             # Inicializar BD (PRIMERA VEZ SOLO)"
 echo ""
