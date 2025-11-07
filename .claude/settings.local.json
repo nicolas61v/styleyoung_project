@@ -6,7 +6,10 @@
       "Bash(python manage.py runserver:*)",
       "Bash(git add:*)",
       "Bash(git rebase:*)",
-      "Bash(python manage.py test:*)"
+      "Bash(python manage.py test:*)",
+      "Bash(python test_clima.py:*)",
+      "Bash(chcp:*)",
+      "Bash(pip freeze:*)"
     ],
     "deny": [],
     "ask": []

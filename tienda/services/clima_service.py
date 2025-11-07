@@ -37,7 +37,7 @@ class ClimaService:
                 'sensacion_termica': 26.0
             }
         """
-        # Cachear resultados por 30 minutos para no exceder límite de API
+        # Cachear resultados por 2 horas para no exceder límite de API
         cache_key = f'clima_{cls.CIUDAD}_{cls.PAIS}'
         clima_cached = cache.get(cache_key)
 
@@ -53,8 +53,18 @@ class ClimaService:
                 'lang': 'es'  # Descripciones en español
             }
 
-            # Realizar solicitud a la API
-            response = requests.get(cls.BASE_URL, params=params, timeout=5)
+            # Realizar solicitud a la API con reintentos en caso de rate limit
+            max_retries = 2
+            for attempt in range(max_retries):
+                response = requests.get(cls.BASE_URL, params=params, timeout=5)
+
+                if response.status_code == 200:
+                    break
+                elif response.status_code == 429 and attempt < max_retries - 1:
+                    # Esperar un poco antes de reintentar
+                    import time
+                    time.sleep(2)
+                    continue
 
             if response.status_code == 200:
                 data = response.json()
@@ -71,13 +81,41 @@ class ClimaService:
                     'icon_url': f"https://openweathermap.org/img/wn/{data['weather'][0]['icon']}@2x.png"
                 }
 
-                # Cachear por 30 minutos
-                cache.set(cache_key, clima_info, 1800)
+                # Cachear por 2 horas (7200 segundos)
+                cache.set(cache_key, clima_info, 7200)
 
                 return clima_info
+            elif response.status_code == 429:
+                # Error de rate limit: usar datos por defecto
+                print(f"Error 429 - API rate limit alcanzado. Usando datos por defecto.")
+                # Retornar datos por defecto de Medellín
+                default_clima = {
+                    'temperatura': 24.0,
+                    'descripcion': 'Clima despejado',
+                    'icono': '01d',
+                    'humedad': 65,
+                    'sensacion_termica': 25.0,
+                    'ciudad': cls.CIUDAD,
+                    'pais': cls.PAIS,
+                    'icon_url': 'https://openweathermap.org/img/wn/01d@2x.png'
+                }
+                # Cachear por 1 hora
+                cache.set(cache_key, default_clima, 3600)
+                return default_clima
             else:
                 print(f"Error al obtener clima: {response.status_code}")
-                return None
+                # Si hay otro error, retornar datos por defecto también
+                default_clima = {
+                    'temperatura': 24.0,
+                    'descripcion': 'Clima no disponible',
+                    'icono': '01d',
+                    'humedad': 65,
+                    'sensacion_termica': 25.0,
+                    'ciudad': cls.CIUDAD,
+                    'pais': cls.PAIS,
+                    'icon_url': 'https://openweathermap.org/img/wn/01d@2x.png'
+                }
+                return default_clima
 
         except requests.exceptions.Timeout:
             print("Timeout al consultar API de clima")

@@ -1,6 +1,6 @@
 # Dockerfile para StyleYoung - Tienda Virtual de Ropa
-# Python 3.11 base image
-FROM python:3.11-slim
+# Python 3.12 base image
+FROM python:3.12-slim
 
 # Información del maintainer
 LABEL maintainer="StyleYoung Team"

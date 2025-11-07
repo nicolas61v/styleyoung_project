@@ -1,5 +1,5 @@
 # Core Django
-Django==5.2.8
+Django==4.2.15
 Pillow==10.3.0
 
 # HTTP requests (for external APIs)
@@ -21,15 +21,19 @@ openpyxl==3.1.5
 # API REST Framework
 djangorestframework==3.16.1
 django-cors-headers==4.9.0
-django-filter==25.2
+django-filter==24.1
 
 # AWS S3 Storage
-boto3==1.40.68
+boto3==1.28.0
+botocore==1.31.85
 django-storages==1.14.6
 
 # Utilities
-python-gettext==5.0
+python-dotenv==1.0.0
+python-slugify==8.0.4
+pytz==2025.2
+sqlparse==0.5.3
 
-# Testing (opcional)
-# pytest-django==4.8.0
-# factory-boy==3.3.1
+# Security
+cryptography==45.0.5
+argon2-cffi==25.1.0
