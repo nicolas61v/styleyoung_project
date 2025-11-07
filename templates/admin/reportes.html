@@ -137,21 +137,19 @@
             </div>
             <div class="card-body">
                 {% if ventas_por_categoria %}
-                    {% with total_ventas=ventas_por_categoria|dictsort:"total_vendidos"|last|index:1 %}
-                        {% for categoria in ventas_por_categoria %}
-                            {% if categoria.total_vendidos %}
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span>{{ categoria.nombre }}</span>
-                                    <span>{{ categoria.total_vendidos }} vendidos</span>
-                                </div>
-                                <div class="progress">
-                                    <div class="progress-bar" style="width: {% if ventas_por_categoria.0.total_vendidos > 0 %}{{ categoria.total_vendidos|multiply:100|divide:ventas_por_categoria.0.total_vendidos }}{% else %}0{% endif %}%"></div>
-                                </div>
+                    {% for categoria in ventas_por_categoria %}
+                        {% if categoria.total_vendidos > 0 %}
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span>{{ categoria.nombre }}</span>
+                                <span>{{ categoria.total_vendidos }} vendidos</span>
                             </div>
-                            {% endif %}
-                        {% endfor %}
-                    {% endwith %}
+                            <div class="progress">
+                                <div class="progress-bar" style="width: {% if ventas_por_categoria.0.total_vendidos > 0 %}{{ categoria.total_vendidos|multiply:100|divide:ventas_por_categoria.0.total_vendidos }}{% else %}0{% endif %}%"></div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
                 {% else %}
                     <div class="text-center py-4">
                         <p class="text-muted">Sin datos de ventas por categoría</p>
